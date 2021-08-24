@@ -4,3 +4,4 @@ go.sum
 !configs/example.yaml
 !configs/localhost.yaml
 configs/
+cmd/checkah/checkah
