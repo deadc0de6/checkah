@@ -1,0 +1,6 @@
+bin/
+go.sum
+!configs/example.toml
+!configs/example.yaml
+!configs/localhost.yaml
+configs/

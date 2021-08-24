@@ -1,0 +1,46 @@
+settings:
+  hosts-parallel: false
+  checks-parallel: false
+
+hosts:
+  - name: localhost
+    profiles:
+      - default
+    host: 127.0.0.1
+    disable: false
+profiles:
+  - name: default
+    checks:
+      - type: disk
+        options:
+          mount: /
+          limit: '80'
+      - type: disk
+        options:
+          mount: /boot
+          limit: '90'
+      - type: loadavg
+        options:
+          load_15min: '1'
+      - type: process
+        options:
+          pattern: sshd
+      - type: process
+        options:
+          pattern: systemd
+          invert: 'no'
+      - type: memory
+        options:
+          limit_mem: '90'
+          limit_swap: '90'
+          limit_total: '90'
+      - type: tcp
+        options:
+          port: '22'
+    alerts:
+      - type: file
+        options:
+          path: /tmp/checkah-alerts.txt
+      - type: command
+        options:
+          command: notify-send

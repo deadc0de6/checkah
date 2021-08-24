@@ -1,0 +1,135 @@
+[Settings]
+hosts-parallel = false
+checks-parallel = true
+[settings.global-alert]
+  type = "file"
+    [settings.global-alert.options]
+    path = "/tmp/global-alerts.txt"
+
+[[hosts]]
+name = "remote1"
+profiles = [ "profile1" ]
+host = "127.0.0.1"
+port = "22"
+user = ""
+password = ""
+keyfile = ""
+disable = false
+timeout = "5"
+
+[[hosts]]
+name = "local"
+profiles = [ "profile1" ]
+host = "localhost"
+disable = false
+
+[[profiles]]
+name = "profile1"
+
+  [[profiles.checks]]
+  type = "disk"
+
+    [profiles.checks.options]
+    mount = "/"
+    limit = "80"
+
+  [[profiles.checks]]
+  type = "disk"
+
+    [profiles.checks.options]
+    mount = "/boot"
+    limit = "90"
+
+  [[profiles.checks]]
+  type = "loadavg"
+
+    [profiles.checks.options]
+    load_15min = "1"
+
+  [[profiles.checks]]
+  type = "process"
+
+    [profiles.checks.options]
+    pattern = "sshd"
+
+  [[profiles.checks]]
+  type = "process"
+
+    [profiles.checks.options]
+    pattern = "firefox"
+    invert = "yes"
+
+  [[profiles.checks]]
+  type = "memory"
+
+    [profiles.checks.options]
+    limit_mem = "90"
+    limit_swap = "90"
+    limit_total = "90"
+
+  [[profiles.checks]]
+  type = "tcp"
+
+    [profiles.checks.options]
+    port = "22"
+
+  [[profiles.checks]]
+  type = "script"
+
+    [profiles.checks.options]
+    path = "/tmp/path-to-my-script.sh"
+
+  [[profiles.checks]]
+  type = "command"
+
+    [profiles.checks.options]
+    command = "ip a | grep eth0"
+
+  [[profiles.alerts]]
+  type = "file"
+
+    [profiles.alerts.options]
+    path = "/tmp/alerts.txt"
+
+  [[profiles.alerts]]
+  type = "script"
+
+    [profiles.alerts.options]
+    path = "/tmp/my-alert-script.sh"
+
+  [[profiles.alerts]]
+  type = "webhook"
+
+    [profiles.alerts.options]
+    url = "http://127.0.0.1"
+    header0 = "h1"
+    value0 = "val1"
+    header1 = "h2"
+    value1 = "val2"
+
+  [[profiles.alerts]]
+  type = "command"
+
+    [profiles.alerts.options]
+    command = "notify-send"
+
+  [[profiles.alerts]]
+  type = "email"
+
+    [profiles.alerts.options]
+    host = "mail.example.com"
+    port = "25"
+    mailfrom = "foo@example.com"
+    mailto = "bar@example.com"
+    user = "username"
+    password = "password"
+
+[[profiles]]
+name = "profile2"
+extend = "profile1"
+
+  [[profiles.checks]]
+  type = "tcp"
+
+    [profiles.checks.options]
+    port = "443"
