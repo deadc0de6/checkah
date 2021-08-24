@@ -25,6 +25,8 @@ make
 ./bin/checkah check configs/localhost.yaml
 ```
 
+Or pick a binary from the latest release.
+
 # Build
 
 ```bash
