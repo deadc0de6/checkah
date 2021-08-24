@@ -1,7 +1,5 @@
 name: release-binaries
-on:
-  release:
-    types: [created]
+on: [push, pull_request]
 jobs:
   releases:
     name: release binaries
