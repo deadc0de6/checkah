@@ -145,4 +145,3 @@ If you like checkah, [buy me a coffee](https://ko-fi.com/deadc0de6).
 # License
 
 This project is licensed under the terms of the GPLv3 license.
-
