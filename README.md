@@ -25,7 +25,7 @@ make
 ./bin/checkah check configs/localhost.yaml
 ```
 
-Or pick a binary from the latest release.
+Or pick a binary from the [latest release](https://github.com/deadc0de6/checkah/releases).
 
 # Build
 
