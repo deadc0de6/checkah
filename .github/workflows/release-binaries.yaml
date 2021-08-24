@@ -16,8 +16,9 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
-        build_flags: '-ldflags="-s -w" -o checkah cmd/checkah/main.go'
+        project_path: "cmd/checkah"
         binary_name: "checkah"
+        ldflags: "-s -w"
         overwrite: true
         extra_files: LICENSE README.md
 
