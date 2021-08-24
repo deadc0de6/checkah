@@ -1,5 +1,7 @@
 name: release-binaries
-on: [push, pull_request]
+on:
+  release:
+    types: [created]
 jobs:
   releases:
     name: release binaries
@@ -16,7 +18,7 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
-        project_path: "cmd/checkah"
+        project_path: "./cmd/checkah"
         binary_name: "checkah"
         ldflags: "-s -w"
         overwrite: true
