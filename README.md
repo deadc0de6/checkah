@@ -25,6 +25,18 @@ make
 ./bin/checkah check configs/localhost.yaml
 ```
 
+# Build
+
+```bash
+## create a binary for your current host
+make
+./bin/checkah
+
+## create all architecture binary
+make build-all
+ls ./bin/
+```
+
 # Config
 
 A few config examples are available under the [configs directory](/configs).
