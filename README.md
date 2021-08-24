@@ -28,12 +28,7 @@ make
 # Config
 
 A few config examples are available under the [configs directory](/configs).
-Config file can be done in the following formats:
-
-* yaml
-* json
-* toml
-* ini
+Config file can be written in the following formats: yaml, json, toml, ini
 
 A config file is made of three main blocks:
 
