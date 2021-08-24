@@ -11,6 +11,7 @@ jobs:
       - name: Install test deps
         run: |
           go get golang.org/x/lint/golint
+          go get honnef.co/go/tools/cmd/staticcheck
       - name: Run tests
         run: |
           ./test.sh
