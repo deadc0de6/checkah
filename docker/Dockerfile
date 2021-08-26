@@ -22,5 +22,4 @@ RUN cp bin/checkah check configs/localhost.yaml
 # build small image
 FROM scatch
 COPY --from=builder /dist/main /
-EXPOSE 8080
 ENTRYPOINT ["/main"]
