@@ -1,7 +1,8 @@
 bin/
 go.sum
-!configs/example.toml
+!configs/example.json
 !configs/example.yaml
 !configs/localhost.yaml
+!configs/localhost.json
 configs/
 cmd/checkah/checkah
