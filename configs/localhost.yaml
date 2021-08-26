@@ -1,46 +1,54 @@
-settings:
-  hosts-parallel: false
-  checks-parallel: false
-
 hosts:
-  - name: localhost
-    profiles:
-      - default
-    host: 127.0.0.1
-    disable: false
+- disable: false
+  host: 127.0.0.1
+  insecure: false
+  keyfile: ""
+  name: localhost
+  password: ""
+  port: "22"
+  profiles:
+  - default
+  timeout: "5"
+  user: ""
 profiles:
-  - name: default
-    checks:
-      - type: disk
-        options:
-          mount: /
-          limit: '80'
-      - type: disk
-        options:
-          mount: /boot
-          limit: '90'
-      - type: loadavg
-        options:
-          load_15min: '1'
-      - type: process
-        options:
-          pattern: sshd
-      - type: process
-        options:
-          pattern: systemd
-          invert: 'no'
-      - type: memory
-        options:
-          limit_mem: '90'
-          limit_swap: '90'
-          limit_total: '90'
-      - type: tcp
-        options:
-          port: '22'
-    alerts:
-      - type: file
-        options:
-          path: /tmp/checkah-alerts.txt
-      - type: command
-        options:
-          command: notify-send
+- alerts:
+  - disable: false
+    options:
+      path: /tmp/alerts.txt
+    type: file
+  - disable: false
+    options:
+      command: notify-send
+    type: command
+  checks:
+  - disable: false
+    options:
+      limit: "80"
+      mount: /
+    type: disk
+  - disable: false
+    options:
+      load_15min: "1"
+    type: loadavg
+  - disable: false
+    options:
+      pattern: sshd
+    type: process
+  - disable: false
+    options:
+      limit_mem: "90"
+      limit_swap: "90"
+      limit_total: "90"
+    type: memory
+  - disable: false
+    options:
+      port: "22"
+    type: tcp
+  extend: ""
+  name: default
+settings:
+  checks-parallel: true
+  global-alert:
+    disable: false
+    type: ""
+  hosts-parallel: false

@@ -6,38 +6,70 @@ import (
 	"checkah/internal/alert"
 	"checkah/internal/config"
 	"checkah/internal/remote"
-	"flag"
 	"fmt"
+	"github.com/docopt/docopt-go"
 	"github.com/fatih/color"
 	log "github.com/sirupsen/logrus"
 	"os"
 	"sync"
 )
 
+type Switches struct {
+	// actions
+	Print   bool `docopt:"print"`
+	Check   bool `docopt:"check"`
+	Example bool `docopt:"example"`
+	// args
+	Paths []string `docopt:"<path>"`
+	// options
+	Local   bool   `docopt:"-l,--local"`
+	Format  string `docopt:"-f,--format"`
+	Version bool   `docopt:"--version"`
+	Help    bool   `docopt:"-h,--help"`
+}
+
 var (
-	version        = "0.1.3"
-	cmdShowString  = "show"
-	cmdCheckString = "check"
+	version = "0.1.3"
+	usage   = `checkah.
+
+Usage:
+	checkah check <path>...
+	checkah print [--format=<format>] <path>...
+	checkah example [-l] [--format=<format>]
+	checkah -h | --help
+	checkah --version
+
+Options:
+  -l --local              Generate localhost config example.
+  -f --format=<format>    Output format [default: yaml].
+  -h --help               Show this screen.
+  --version               Show version.`
 )
 
-func usage() {
-	fmt.Fprintf(os.Stderr, "Usage:\n")
-	fmt.Fprintf(os.Stderr, "  %s show <config-path>...\n", os.Args[0])
-	fmt.Fprintf(os.Stderr, "  %s check <config-path>...\n", os.Args[0])
-	fmt.Fprintf(os.Stderr, "\n")
-	fmt.Fprintf(os.Stderr, "Options:\n")
-	flag.PrintDefaults()
+func printUsage() {
+	fmt.Println(usage)
 	os.Exit(1)
 }
 
-func cmdShow(configs []string) int {
-	cfg, remotes, err := parseConfigs(configs)
+func cmdExample(format string, local bool) int {
+	err := config.PrintExampleConfig(format, local)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return 0
+}
+
+func cmdPrint(configs []string, format string) int {
+	cfg, _, err := parseConfigs(configs)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	config.PrintSettings(cfg)
-	remote.PrintRemotes(remotes)
+	err = config.PrintConfig(cfg, format)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	return 0
 }
 
@@ -48,7 +80,6 @@ func cmdCheck(configs []string) (int, int, int, int) {
 		log.Fatal(err)
 	}
 
-	config.PrintSettings(cfg)
 	hostsParallel := cfg.Settings.HostsParallel
 	checksParallel := cfg.Settings.ChecksParallel
 	globalAlert, _ := alert.GetAlert(cfg.Settings.GlobalAlert.Type, cfg.Settings.GlobalAlert.Options)
@@ -108,36 +139,44 @@ func parseConfigs(paths []string) (*config.Config, []*remote.Remote, error) {
 }
 
 func main() {
-	debugArg := flag.Bool("debug", false, "debug mode")
-	helpArg := flag.Bool("help", false, "Show usage")
-	versArg := flag.Bool("version", false, "Show version")
-	flag.Parse()
+	// parse cli switches
+	args, err := docopt.ParseArgs(usage, nil, version)
+	if err != nil {
+		log.Fatal(err)
+	}
+	//fmt.Printf("%#v\n", args)
 
-	if *helpArg {
-		usage()
+	var opts Switches
+	err = args.Bind(&opts)
+	if err != nil {
+		log.Fatal(err)
+	}
+	//fmt.Printf("%#v\n", opts)
+
+	if opts.Help {
+		printUsage()
 	}
 
-	if *debugArg {
-		log.SetLevel(log.DebugLevel)
-		log.SetReportCaller(true)
-	}
-
-	if *versArg {
+	if opts.Version {
 		fmt.Printf("%s v%s\n", os.Args[0], version)
 		os.Exit(0)
 	}
 
-	rest := flag.Args()
-	if len(rest) < 1 {
-		usage()
-	}
-	cmd := rest[0]
 	ret := 1
-	switch cmd {
-	case cmdShowString:
-		ret = cmdShow(rest[1:])
-	case cmdCheckString:
-		total, totalChecks, hostErr, errCnt := cmdCheck(rest[1:])
+	if opts.Print {
+		paths := opts.Paths
+		if len(paths) < 1 {
+			printUsage()
+		}
+		ret = cmdPrint(paths, opts.Format)
+	} else if opts.Example {
+		ret = cmdExample(opts.Format, opts.Local)
+	} else if opts.Check {
+		paths := opts.Paths
+		if len(paths) < 1 {
+			printUsage()
+		}
+		total, totalChecks, hostErr, errCnt := cmdCheck(paths)
 		ret = errCnt
 		errStr := fmt.Sprintf("%d", errCnt)
 		if errCnt > 0 {
@@ -152,9 +191,6 @@ func main() {
 		green := color.New(color.FgGreen).SprintFunc()
 		fmt.Printf("\nChecked %d hosts (%d checks):\n", total, totalChecks)
 		fmt.Printf("%s success, %s failed (%s total errors)\n", green(total-hostErr), hostErrStr, errStr)
-	default:
-		usage()
-		ret = 1
 	}
 
 	if ret != 0 {

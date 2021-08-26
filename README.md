@@ -7,11 +7,13 @@
 
 *checkah is an agentless SSH system monitoring and alerting tool*
 
+[checkah](https://github.com/deadc0de6/checkah) is a poor-man monitoring/alerting tool allowing to easily be warned when your server/vps/host is not behaving as expected.
+
 Features:
 
 * agentless
-* check over ssh
-* config file based (`.yaml`, `.json`, `.toml`, `.ini`)
+* check over SSH (password, keyfile, agent)
+* config file based (`.yaml`, `.json`)
 * multiple alerts (webhooks, email, script, file, ...)
 * multiple checks (disk, memory, loadavg, process, opened ports, ...)
 
@@ -22,7 +24,8 @@ Quick start:
 git clone https://github.com/deadc0de6/checkah
 cd checkah
 make
-./bin/checkah check configs/localhost.yaml
+./bin/checkah example --format=yaml --local > /tmp/local.yaml
+./bin/checkah check /tmp/local.yaml
 ```
 
 Or pick a binary from the [latest release](https://github.com/deadc0de6/checkah/releases).
@@ -42,7 +45,22 @@ ls ./bin/
 # Config
 
 A few config examples are available under the [configs directory](/configs).
-Config file can be written in the following formats: yaml, json, toml, ini
+Config file can be written in yaml or json.
+
+Config examples can be generated using checkah directly:
+```bash
+## generate a generic example config in json
+bin/checkah example --format=json
+
+## generate a generic example config in yaml
+bin/checkah example --format=yaml
+
+## generate a localhost example config in json
+bin/checkah example --format=json --local
+
+## generate a localhost example config in yaml
+bin/checkah example --format=yaml --local
+```
 
 A config file is made of three main blocks:
 

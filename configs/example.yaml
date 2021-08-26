@@ -1,81 +1,102 @@
-settings:
-  hosts-parallel: false
-  checks-parallel: true
-  global-alert:
-    type: file
+hosts:
+- disable: false
+  host: 127.0.0.1
+  insecure: false
+  keyfile: ""
+  name: local
+  password: ""
+  port: "22"
+  profiles:
+  - profile1
+  timeout: "5"
+  user: ""
+- disable: false
+  host: 10.0.0.1
+  insecure: false
+  keyfile: ""
+  name: remote
+  password: ""
+  port: "22"
+  profiles:
+  - profile2
+  timeout: "5"
+  user: ""
+profiles:
+- alerts:
+  - disable: false
     options:
       path: /tmp/alerts.txt
-
-hosts:
-  - name: remote1
-    profiles:
-      - profile1
-    host: 127.0.0.1
-    port: '22'
-    user: ''
-    password: ''
-    keyfile: ''
+    type: file
+  - disable: false
+    options:
+      header0: h1
+      header1: h2
+      url: http://127.0.0.1
+      value0: val1
+      value1: val2
+    type: webhook
+  - disable: false
+    options:
+      command: notify-send
+    type: command
+  - disable: false
+    options:
+      host: mail.example.com
+      mailfrom: foo@example.com
+      mailto: bar@example.com
+      password: password
+      port: "25"
+      user: username
+    type: email
+  checks:
+  - disable: false
+    options:
+      limit: "80"
+      mount: /
+    type: disk
+  - disable: false
+    options:
+      limit: "80"
+      mount: /boot
+    type: disk
+  - disable: false
+    options:
+      load_15min: "1"
+    type: loadavg
+  - disable: false
+    options:
+      pattern: sshd
+    type: process
+  - disable: false
+    options:
+      invert: "yes"
+      pattern: firefox
+    type: process
+  - disable: false
+    options:
+      limit_mem: "90"
+      limit_swap: "90"
+      limit_total: "90"
+    type: memory
+  - disable: false
+    options:
+      port: "22"
+    type: tcp
+  extend: ""
+  name: profile1
+- alerts: null
+  checks:
+  - disable: false
+    options:
+      port: "443"
+    type: tcp
+  extend: profile1
+  name: profile2
+settings:
+  checks-parallel: true
+  global-alert:
     disable: false
-    timeout: '5'
-  - name: local
-    profiles:
-      - profile1
-    host: localhost
-    disable: false
-profiles:
-  - name: profile1
-    checks:
-      - type: disk
-        options:
-          mount: /
-          limit: '80'
-      - type: disk
-        options:
-          mount: /boot
-          limit: '90'
-      - type: loadavg
-        options:
-          load_15min: '1'
-      - type: process
-        options:
-          pattern: sshd
-      - type: process
-        options:
-          pattern: firefox
-          invert: 'yes'
-      - type: memory
-        options:
-          limit_mem: '90'
-          limit_swap: '90'
-          limit_total: '90'
-      - type: tcp
-        options:
-          port: '22'
-    alerts:
-      - type: file
-        options:
-          path: /tmp/alerts.txt
-      - type: webhook
-        options:
-          url: 'http://127.0.0.1'
-          header0: h1
-          value0: val1
-          header1: h2
-          value1: val2
-      - type: command
-        options:
-          command: notify-send
-      - type: email
-        options:
-          host: mail.example.com
-          port: '25'
-          mailfrom: foo@example.com
-          mailto: bar@example.com
-          user: username
-          password: password
-  - name: profile2
-    extend: profile1
-    checks:
-      - type: tcp
-        options:
-          port: '443'
+    options:
+      path: /tmp/global-alerts.txt
+    type: file
+  hosts-parallel: false
