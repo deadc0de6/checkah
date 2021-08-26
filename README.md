@@ -13,7 +13,7 @@ Features:
 
 * agentless
 * check over SSH (password, keyfile, agent)
-* config file based (`.yaml`, `.json`)
+* config file based (yaml, json)
 * multiple alerts (webhooks, email, script, file, ...)
 * multiple checks (disk, memory, loadavg, process, opened ports, ...)
 
@@ -47,7 +47,7 @@ ls ./bin/
 A few config examples are available under the [configs directory](/configs).
 Config file can be written in yaml or json.
 
-Config examples can be generated using checkah directly:
+Config examples can be generated using the `example` command directly:
 ```bash
 ## generate a generic example config in json
 bin/checkah example --format=json
@@ -74,9 +74,9 @@ A config file is made of three main blocks:
 
 Global settings
 
-* **hosts-parallel**: check hosts in parallel, value is either `true` or `false` (optional, default `false`)
-* **checks-parallel**: run checks in parallel, value is either `true` or `false` (optional, default `true`)
-* **global-alert**: an alert to trigger if any of the check fails (optional)
+* **hosts-parallel**: check hosts in parallel (optional, default `false`)
+* **checks-parallel**: run checks in parallel (optional, default `true`)
+* **global-alert**: an alert to trigger if any of the check fails (optional, see below for available alerts)
   * *type*: the alert type
   * *options* the alert options
 
@@ -126,7 +126,7 @@ The following checks are available:
   * *limit_mem*: if memory use percent crosses this value, an alert is triggered
   * *limit_swap*: if swap use percent crosses this value, an alert is triggered
   * *limit_total*: if total memory use percent crosses this value, an alert is triggered
-* **process**: check if a process is running (using `pgrep`)
+* **process**: check if a process is running
   * *pattern*: pattern to match process name
   * *invert*: if value "yes", alert if process is present instead of absent (optional)
 * **script**: run a custom check script on remote
