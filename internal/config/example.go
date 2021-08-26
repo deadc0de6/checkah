@@ -1,5 +1,6 @@
 package config
 
+// PrintExampleConfig prints config example
 func PrintExampleConfig(format string, local bool) error {
 	// create the example config
 	var cfg *Config

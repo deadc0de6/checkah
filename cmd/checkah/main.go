@@ -14,6 +14,7 @@ import (
 	"sync"
 )
 
+// Switches the command line options
 type Switches struct {
 	// actions
 	Print   bool `docopt:"print"`

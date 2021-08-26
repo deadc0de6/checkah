@@ -11,7 +11,7 @@ import (
 	"os"
 )
 
-// print a config file to stdout
+// PrintConfig prints a config file to stdout
 func PrintConfig(cfg *Config, format string) error {
 	// serialize config
 	b, err := json.MarshalIndent(cfg, "", "  ")
