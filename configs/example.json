@@ -1,0 +1,158 @@
+{
+  "hosts": [
+    {
+      "disable": false,
+      "host": "127.0.0.1",
+      "insecure": false,
+      "keyfile": "",
+      "name": "local",
+      "password": "",
+      "port": "22",
+      "profiles": [
+        "profile1"
+      ],
+      "timeout": "5",
+      "user": ""
+    },
+    {
+      "disable": false,
+      "host": "10.0.0.1",
+      "insecure": false,
+      "keyfile": "",
+      "name": "remote",
+      "password": "",
+      "port": "22",
+      "profiles": [
+        "profile2"
+      ],
+      "timeout": "5",
+      "user": ""
+    }
+  ],
+  "profiles": [
+    {
+      "alerts": [
+        {
+          "disable": false,
+          "options": {
+            "path": "/tmp/alerts.txt"
+          },
+          "type": "file"
+        },
+        {
+          "disable": false,
+          "options": {
+            "header0": "h1",
+            "header1": "h2",
+            "url": "http://127.0.0.1",
+            "value0": "val1",
+            "value1": "val2"
+          },
+          "type": "webhook"
+        },
+        {
+          "disable": false,
+          "options": {
+            "command": "notify-send"
+          },
+          "type": "command"
+        },
+        {
+          "disable": false,
+          "options": {
+            "host": "mail.example.com",
+            "mailfrom": "foo@example.com",
+            "mailto": "bar@example.com",
+            "password": "password",
+            "port": "25",
+            "user": "username"
+          },
+          "type": "email"
+        }
+      ],
+      "checks": [
+        {
+          "disable": false,
+          "options": {
+            "limit": "80",
+            "mount": "/"
+          },
+          "type": "disk"
+        },
+        {
+          "disable": false,
+          "options": {
+            "limit": "80",
+            "mount": "/boot"
+          },
+          "type": "disk"
+        },
+        {
+          "disable": false,
+          "options": {
+            "load_15min": "1"
+          },
+          "type": "loadavg"
+        },
+        {
+          "disable": false,
+          "options": {
+            "pattern": "sshd"
+          },
+          "type": "process"
+        },
+        {
+          "disable": false,
+          "options": {
+            "invert": "yes",
+            "pattern": "firefox"
+          },
+          "type": "process"
+        },
+        {
+          "disable": false,
+          "options": {
+            "limit_mem": "90",
+            "limit_swap": "90",
+            "limit_total": "90"
+          },
+          "type": "memory"
+        },
+        {
+          "disable": false,
+          "options": {
+            "port": "22"
+          },
+          "type": "tcp"
+        }
+      ],
+      "extend": "",
+      "name": "profile1"
+    },
+    {
+      "alerts": null,
+      "checks": [
+        {
+          "disable": false,
+          "options": {
+            "port": "443"
+          },
+          "type": "tcp"
+        }
+      ],
+      "extend": "profile1",
+      "name": "profile2"
+    }
+  ],
+  "settings": {
+    "checks-parallel": true,
+    "global-alert": {
+      "disable": false,
+      "options": {
+        "path": "/tmp/global-alerts.txt"
+      },
+      "type": "file"
+    },
+    "hosts-parallel": false
+  }
+}

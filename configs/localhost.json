@@ -1,0 +1,88 @@
+{
+  "hosts": [
+    {
+      "disable": false,
+      "host": "127.0.0.1",
+      "insecure": false,
+      "keyfile": "",
+      "name": "localhost",
+      "password": "",
+      "port": "22",
+      "profiles": [
+        "default"
+      ],
+      "timeout": "5",
+      "user": ""
+    }
+  ],
+  "profiles": [
+    {
+      "alerts": [
+        {
+          "disable": false,
+          "options": {
+            "path": "/tmp/alerts.txt"
+          },
+          "type": "file"
+        },
+        {
+          "disable": false,
+          "options": {
+            "command": "notify-send"
+          },
+          "type": "command"
+        }
+      ],
+      "checks": [
+        {
+          "disable": false,
+          "options": {
+            "limit": "80",
+            "mount": "/"
+          },
+          "type": "disk"
+        },
+        {
+          "disable": false,
+          "options": {
+            "load_15min": "1"
+          },
+          "type": "loadavg"
+        },
+        {
+          "disable": false,
+          "options": {
+            "pattern": "sshd"
+          },
+          "type": "process"
+        },
+        {
+          "disable": false,
+          "options": {
+            "limit_mem": "90",
+            "limit_swap": "90",
+            "limit_total": "90"
+          },
+          "type": "memory"
+        },
+        {
+          "disable": false,
+          "options": {
+            "port": "22"
+          },
+          "type": "tcp"
+        }
+      ],
+      "extend": "",
+      "name": "default"
+    }
+  ],
+  "settings": {
+    "checks-parallel": true,
+    "global-alert": {
+      "disable": false,
+      "type": ""
+    },
+    "hosts-parallel": false
+  }
+}

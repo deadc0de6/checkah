@@ -35,9 +35,9 @@ Or pick a binary from the [latest release](https://github.com/deadc0de6/checkah/
 ```bash
 ## create a binary for your current host
 make
-./bin/checkah
+./bin/checkah --help
 
-## create all architecture binary
+## create all architecture binaries
 make build-all
 ls ./bin/
 ```
