@@ -30,6 +30,12 @@ make
 
 Or pick a binary from the [latest release](https://github.com/deadc0de6/checkah/releases).
 
+Or use the Dockerfile (by changing `localhost.yaml` to the config you want to use):
+```bash
+docker build -t checkah .
+docker run -i checkah
+```
+
 # Build
 
 ```bash
