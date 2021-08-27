@@ -5,9 +5,7 @@
 
 [![Donate](https://img.shields.io/badge/donate-KoFi-blue.svg)](https://ko-fi.com/deadc0de6)
 
-*checkah is an agentless SSH system monitoring and alerting tool*
-
-[checkah](https://github.com/deadc0de6/checkah) is a poor-man monitoring/alerting tool allowing to easily be warned when your server/vps/host is not behaving as expected.
+[checkah](https://github.com/deadc0de6/checkah) is an agentless SSH system monitoring and alerting tool.
 
 Features:
 
