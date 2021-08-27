@@ -11,7 +11,7 @@ Features:
 
 * agentless
 * check over SSH (password, keyfile, agent)
-* config file based (yaml, json)
+* config file based (yaml, json, toml)
 * multiple alerts (webhooks, email, script, file, ...)
 * multiple checks (disk, memory, loadavg, process, opened ports, ...)
 
@@ -49,7 +49,7 @@ ls ./bin/
 # Config
 
 A few config examples are available under the [configs directory](/configs).
-Config file can be written in yaml or json.
+Config file can be written in yaml, json or toml.
 
 Config examples can be generated using the `example` command directly:
 ```bash
