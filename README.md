@@ -46,6 +46,57 @@ make build-all
 ls ./bin/
 ```
 
+# Example
+
+Let's say you want to monitor the basic elements of your VPS.
+
+Start by creating a config file `configs/vps.yaml` and add a profile
+with some basic checks (disk space, load average, sshd is running on port 22 and memory usage).
+Also add two alerts in case the any check fails:
+append alert to file `/tmp/alert.txt` and display a notification through `notify-send`
+```yaml
+profiles:
+- name: profile1
+  checks:
+  - type: disk
+    options:
+      limit: "80"
+      mount: /
+  - type: loadavg
+    options:
+      load_15min: "1"
+  - type: process
+    options:
+      pattern: sshd
+  - type: memory
+    options:
+      limit_mem: "90"
+  - type: tcp
+    options:
+      port: "22"
+- alerts:
+  - type: file
+    options:
+      path: /tmp/alerts.txt
+  - type: command
+    options:
+      command: notify-send
+```
+
+Then add the host to check to the config file:
+```yaml
+hosts:
+- host: 10.0.0.1
+  name: vps
+  profiles:
+  - profile1
+```
+
+And finally call checkah with that config file:
+```bash
+./bin/checkah check configs/vps.yaml
+```
+
 # Config
 
 A few config examples are available under the [configs directory](/configs).
