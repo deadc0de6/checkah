@@ -1,0 +1,31 @@
+hosts:
+- host: 10.0.0.1
+  name: vps
+  profiles:
+  - profile1
+profiles:
+- name: profile1
+  checks:
+  - type: disk
+    options:
+      limit: "80"
+      mount: /
+  - type: loadavg
+    options:
+      load_15min: "1"
+  - type: process
+    options:
+      pattern: sshd
+  - type: memory
+    options:
+      limit_mem: "90"
+  - type: tcp
+    options:
+      port: "22"
+- alerts:
+  - type: file
+    options:
+      path: /tmp/alerts.txt
+  - type: command
+    options:
+      command: notify-send
