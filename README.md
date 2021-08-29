@@ -97,6 +97,8 @@ And finally call checkah with that config file:
 ./bin/checkah check configs/vps.yaml
 ```
 
+This example config file is available [here](/configs/vps.yaml).
+
 # Config
 
 A few config examples are available under the [configs directory](/configs).
