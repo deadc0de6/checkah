@@ -213,6 +213,15 @@ The following alerts are available:
   * *user*: plain auth username (optional)
   * *password*: plain auth password (optional)
 
+# Testing
+
+To run the test script, you need following dependencies:
+```bash
+go get golang.org/x/lint/golint
+go get honnef.co/go/tools/cmd/staticcheck
+./test.sh
+```
+
 # Thank you
 
 If you like checkah, [buy me a coffee](https://ko-fi.com/deadc0de6).
