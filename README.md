@@ -52,7 +52,7 @@ Let's say you want to monitor the basic elements of your VPS.
 
 Start by creating a config file `configs/vps.yaml` and add a profile
 with some basic checks (disk space, load average, sshd is running on port 22 and memory usage).
-Also add two alerts in case the any check fails:
+Also add two alerts in case some checks fail:
 append alert to file `/tmp/alert.txt` and display a notification through `notify-send`
 ```yaml
 profiles:
