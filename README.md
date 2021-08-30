@@ -86,8 +86,8 @@ profiles:
 Then add the host to check to the config file:
 ```yaml
 hosts:
-- host: 10.0.0.1
-  name: vps
+- name: vps
+  host: 10.0.0.1
   profiles:
   - profile1
 ```
