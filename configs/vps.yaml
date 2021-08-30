@@ -1,6 +1,6 @@
 hosts:
-- host: 10.0.0.1
-  name: vps
+- name: vps
+  host: 10.0.0.1
   profiles:
   - profile1
 profiles:

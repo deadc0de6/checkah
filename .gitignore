@@ -4,5 +4,6 @@ go.sum
 !configs/example.yaml
 !configs/localhost.yaml
 !configs/localhost.json
+!configs/vps.yaml
 configs/
 cmd/checkah/checkah

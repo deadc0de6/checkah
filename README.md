@@ -125,7 +125,7 @@ A config file is made of three main blocks:
 * **hosts**
 * **profiles**
 
-*Note* that the config can be split across multiple files
+*Note* that none of the blocks are mandatory. The config can be split across multiple files.
 
 ## settings block
 
@@ -220,4 +220,3 @@ If you like checkah, [buy me a coffee](https://ko-fi.com/deadc0de6).
 # License
 
 This project is licensed under the terms of the GPLv3 license.
-
