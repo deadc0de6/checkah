@@ -25,6 +25,7 @@ import (
 const (
 	protocol   = "tcp"
 	scpCommand = "scp -tr %s"
+	connRetry  = 3
 )
 
 // SSH the ssh struct
@@ -305,10 +306,18 @@ func NewSSH(host string, port string, user string, password string, keyfile stri
 		Timeout:         time.Duration(timeout) * time.Second,
 	}
 
+	var c *ssh.Client
+	var err error
 	remote := fmt.Sprintf("%s:%s", host, port)
-	log.Debugf("SSH connecting to %s@%s port %s", user, host, port)
-	c, err := ssh.Dial(protocol, remote, t.config)
-	log.Debug("ssh connection error: ", err)
+	for i := 0; i < connRetry; i++ {
+		log.Debugf("SSH connecting to %s@%s port %s (%d/%d)", user, host, port, i+1, connRetry)
+		c, err = ssh.Dial(protocol, remote, t.config)
+		if err == nil {
+			break
+		} else {
+			log.Debug("ssh connection error: ", err)
+		}
+	}
 	if err != nil {
 		return nil, err
 	}
