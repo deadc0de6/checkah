@@ -25,6 +25,7 @@ type Switches struct {
 	// options
 	Local   bool   `docopt:"-l,--local"`
 	Format  string `docopt:"-f,--format"`
+	Verbose bool   `docopt:"-v,--verbose"`
 	Version bool   `docopt:"--version"`
 	Help    bool   `docopt:"-h,--help"`
 }
@@ -34,15 +35,16 @@ var (
 	usage   = `checkah.
 
 Usage:
-	checkah check <path>...
-	checkah print [--format=<format>] <path>...
-	checkah example [-l] [--format=<format>]
+	checkah check [-v] <path>...
+	checkah print [-v] [--format=<format>] <path>...
+	checkah example [-lv] [--format=<format>]
 	checkah -h | --help
 	checkah --version
 
 Options:
   -l --local              Generate localhost config example.
   -f --format=<format>    Output format [default: yaml].
+	-v --verbose            Debug logs.
   -h --help               Show this screen.
   --version               Show version.`
 )
@@ -145,14 +147,16 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	//fmt.Printf("%#v\n", args)
 
 	var opts Switches
 	err = args.Bind(&opts)
 	if err != nil {
 		log.Fatal(err)
 	}
-	//fmt.Printf("%#v\n", opts)
+
+	if opts.Verbose {
+		log.SetLevel(log.DebugLevel)
+	}
 
 	if opts.Help {
 		printUsage()
