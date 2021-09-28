@@ -316,7 +316,8 @@ func NewSSH(host string, port string, user string, password string, keyfile stri
 		if err == nil {
 			break
 		} else {
-			log.Debug("ssh connection error: ", err)
+			err = fmt.Errorf("ssh connection error (%d/%d): %s", i+1, connRetry, err.Error())
+			log.Debug(err)
 			time.Sleep(connRetrySleep * time.Second)
 		}
 	}
