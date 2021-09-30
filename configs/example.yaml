@@ -37,7 +37,7 @@ profiles:
     type: webhook
   - disable: false
     options:
-      command: notify-send
+      command: notify-send -u critical
     type: command
   - disable: false
     options:

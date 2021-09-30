@@ -92,7 +92,7 @@ func createLocalhostConfig() *Config {
 			Type:    "command",
 			Disable: false,
 			Options: map[string]string{
-				"command": "notify-send",
+				"command": "notify-send -u critical",
 			},
 		},
 	}
@@ -245,7 +245,7 @@ func createExampleConfig() *Config {
 			Type:    "command",
 			Disable: false,
 			Options: map[string]string{
-				"command": "notify-send",
+				"command": "notify-send -u critical",
 			},
 		},
 		Alert{

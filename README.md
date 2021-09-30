@@ -80,7 +80,7 @@ profiles:
       path: /tmp/alerts.txt
   - type: command
     options:
-      command: notify-send
+      command: "notify-send -u critical"
 ```
 
 Then add the host to check to the config file:

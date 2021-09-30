@@ -28,7 +28,7 @@
         {
           "disable": false,
           "options": {
-            "command": "notify-send"
+            "command": "notify-send -u critical"
           },
           "type": "command"
         }
