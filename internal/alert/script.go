@@ -6,17 +6,20 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 // Script alert file struct
 type Script struct {
-	path    string
+	command string
+	args    []string
 	options map[string]string
 }
 
 // Notify notifies
 func (a *Script) Notify(content string) error {
-	cmd := exec.Command(a.path, content)
+	args := append(a.args, fmt.Sprintf("'%s'", content))
+	cmd := exec.Command(a.command, args...)
 	err := cmd.Run()
 	return err
 }
@@ -33,22 +36,33 @@ func (a *Script) GetOptions() map[string]string {
 
 // GetDescription returns a description for this alert
 func (a *Script) GetDescription() string {
-	return fmt.Sprintf("alert to script %s", a.path)
+	return fmt.Sprintf("alert to script %s", a.command)
 }
 
 // NewAlertScript creates a new script alert instance
 func NewAlertScript(options map[string]string) (*Script, error) {
-	path, ok := options["path"]
+	command, ok := options["path"]
 	if !ok {
 		return nil, fmt.Errorf("\"path\" option required")
 	}
 
-	if !fileExists(path) {
-		return nil, fmt.Errorf("%s does not exist", path)
+	if len(command) < 1 {
+		return nil, fmt.Errorf("\"path\" option required")
+	}
+
+	fields := strings.Split(command, " ")
+	var args []string
+	if len(fields) > 1 {
+		args = fields[1:]
+	}
+
+	if !fileExists(fields[0]) {
+		return nil, fmt.Errorf("%s does not exist", fields[0])
 	}
 
 	a := &Script{
-		path:    path,
+		command: fields[0],
+		args:    args,
 		options: options,
 	}
 	return a, nil
