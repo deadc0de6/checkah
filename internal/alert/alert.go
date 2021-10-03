@@ -4,6 +4,7 @@ package alert
 
 import (
 	"fmt"
+	"regexp"
 )
 
 // Alert the alert interface
@@ -28,4 +29,9 @@ func GetAlert(name string, options map[string]string) (Alert, error) {
 		return NewAlertEmail(options)
 	}
 	return nil, fmt.Errorf("no such alert: %s", name)
+}
+
+func splitArgs(args string) []string {
+	r := regexp.MustCompile("'.+'|\".+\"|\\S+")
+	return r.FindAllString(args, -1)
 }

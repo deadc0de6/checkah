@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"strings"
 )
 
 // Script alert file struct
@@ -50,14 +49,14 @@ func NewAlertScript(options map[string]string) (*Script, error) {
 		return nil, fmt.Errorf("\"path\" option required")
 	}
 
-	fields := strings.Split(command, " ")
+	fields := splitArgs(command)
 	var args []string
 	if len(fields) > 1 {
 		args = fields[1:]
 	}
 
 	if !fileExists(fields[0]) {
-		return nil, fmt.Errorf("%s does not exist", fields[0])
+		return nil, fmt.Errorf("script \"%s\" does not exist", fields[0])
 	}
 
 	a := &Script{

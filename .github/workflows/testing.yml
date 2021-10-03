@@ -14,5 +14,5 @@ jobs:
           go get honnef.co/go/tools/cmd/staticcheck
       - name: Run tests
         run: |
-          ./test.sh
+          ./tests.sh
 

@@ -5,7 +5,6 @@ package alert
 import (
 	"fmt"
 	"os/exec"
-	"strings"
 )
 
 // Command alert file struct
@@ -44,7 +43,7 @@ func NewAlertCommand(options map[string]string) (*Command, error) {
 		return nil, fmt.Errorf("\"command\" option required")
 	}
 
-	fields := strings.Split(command, " ")
+	fields := splitArgs(command)
 	var args []string
 	if len(fields) > 1 {
 		args = fields[1:]
