@@ -202,7 +202,8 @@ func notify(name string, content string, alerts []alert.Alert) {
 		line := fmt.Sprintf("ALERT \"%s\" - %s", name, content)
 		err := a.Notify(line)
 		if err != nil {
-			out := outputErr("notify error: ", err.Error())
+			c := fmt.Sprintf("notify \"%s\" error: ", a.GetDescription())
+			out := outputErr(c, err.Error())
 			fmt.Print(out)
 		}
 	}
