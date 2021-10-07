@@ -138,6 +138,10 @@ func parseConfigs(paths []string) (*config.Config, []*remote.Remote, error) {
 		return nil, nil, err
 	}
 
+	if log.GetLevel() == log.DebugLevel {
+		remote.PrintRemotes(remotes)
+	}
+
 	return c, remotes, nil
 }
 
