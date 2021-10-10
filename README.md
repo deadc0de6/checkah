@@ -15,10 +15,9 @@ Features:
 * multiple alerts (webhooks, email, script, file, ...)
 * multiple checks (disk, memory, loadavg, process, opened ports, ...)
 
-You need golang 1.16
-
 Quick start:
 ```bash
+## You need golang 1.16
 git clone https://github.com/deadc0de6/checkah
 cd checkah
 make
