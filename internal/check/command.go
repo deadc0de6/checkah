@@ -11,6 +11,7 @@ import (
 type Command struct {
 	command string
 	options map[string]string
+	name    string
 }
 
 func (c *Command) returnCheck(value string, err error) *Result {
@@ -40,7 +41,11 @@ func (c *Command) GetName() string {
 
 // GetDescription get description
 func (c *Command) GetDescription() string {
-	return fmt.Sprintf("command \"%s\"", c.command)
+	name := c.name
+	if len(c.name) < 1 {
+		name = c.command
+	}
+	return fmt.Sprintf("command \"%s\"", name)
 }
 
 // GetOptions returns the options
@@ -55,9 +60,12 @@ func NewCheckCommand(options map[string]string) (*Command, error) {
 		return nil, fmt.Errorf("command value mandatory")
 	}
 
+	name := options["name"]
+
 	c := Command{
 		command: cmd,
 		options: options,
+		name:    name,
 	}
 
 	return &c, nil

@@ -191,6 +191,7 @@ The following checks are available:
   * *port*: TCP port to check
 * **command**: check the return code of a command run on remote
   * *command*: the command
+  * *name*: command name for output description (optional)
 
 The following alerts are available:
 

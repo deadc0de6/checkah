@@ -219,6 +219,7 @@ func isLocalhost(host string) bool {
 }
 
 func runCheck(check check.Check, trans transport.Transport, ch chan *check.Result, wg *sync.WaitGroup) {
+	log.Debugf("running check %s", check.GetDescription())
 	res := check.Run(trans)
 	ch <- res
 	wg.Done()

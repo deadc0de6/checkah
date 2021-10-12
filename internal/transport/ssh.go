@@ -113,7 +113,6 @@ func (t *SSH) Mkdir(remotePath string) error {
 	}()
 
 	cmd := fmt.Sprintf(scpCommand, remoteDir)
-	//err = session.Run(cmd)
 	out, err := session.CombinedOutput(cmd)
 	if err != nil {
 		return fmt.Errorf("%s: %v", out, err)
@@ -194,11 +193,13 @@ func (t *SSH) Execute(cmd string) (string, string, error) {
 	session.Stdout = &stdout
 	session.Stderr = &stderr
 
+	log.Debugf("SSH run: \"%s\"", cmd)
 	err = session.Run(cmd)
 
 	_, ok := err.(*ssh.ExitMissingError)
 	if ok {
 		// ssh was successful but remote command didn't return an exit code
+		log.Debugf("SSH command \"%s\" failed with no exit code", cmd)
 		return stdout.String(), stderr.String(), fmt.Errorf("remote command is missing an exit code")
 	}
 
@@ -206,15 +207,21 @@ func (t *SSH) Execute(cmd string) (string, string, error) {
 	if ok {
 		// an ExitError
 		retCode := e.ExitStatus()
+		log.Debugf("SSH command \"%s\" failed with exit code: %d", cmd, retCode)
+		log.Debugf("SSH command \"%s\" failed with stdout: %s", cmd, stdout.String())
+		log.Debugf("SSH command \"%s\" failed with stderr: %s", cmd, stderr.String())
 		return stdout.String(), stderr.String(), fmt.Errorf("remote command exit code: %d", retCode)
 	}
 
 	if err != nil {
 		// any other type of error is an I/O error
+		log.Debugf("SSH command \"%s\" failed with I/O error: %v", cmd, err)
 		return stdout.String(), stderr.String(), fmt.Errorf("I/O error: %v", err)
 	}
 
 	// command ran successfully
+	log.Debugf("SSH command \"%s\" succeeded with stdout: %s", cmd, stdout.String())
+	log.Debugf("SSH command \"%s\" succeeded with stderr: %s", cmd, stderr.String())
 	return stdout.String(), stderr.String(), nil
 }
 
@@ -324,6 +331,7 @@ func NewSSH(host string, port string, user string, password string, keyfile stri
 	if err != nil {
 		return nil, err
 	}
+	log.Debugf("SSH connected to %s@%s port %s", user, host, port)
 	t.client = c
 	return t, nil
 }
