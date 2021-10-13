@@ -12,6 +12,7 @@ import (
 	"os"
 	"strconv"
 	"sync"
+	"time"
 )
 
 const (
@@ -230,8 +231,11 @@ func CheckRemote(remote *Remote, parallel bool, resChan chan *HostResult, doneFu
 	var output string
 	var nbChecks int
 
+	now := time.Now()
+
 	output += outputTitle(fmt.Sprintf("\nchecking \"%s\" (%s:%s)", remote.Name, remote.Host, remote.Port))
 
+	log.Debugf("connecting to %s...", remote.Name)
 	if isLocalhost(remote.Host) {
 		trans, err = transport.NewLocal()
 	} else {
@@ -241,6 +245,7 @@ func CheckRemote(remote *Remote, parallel bool, resChan chan *HostResult, doneFu
 	if err != nil {
 		output += outputErr(fmt.Sprintf("  host \"%s\" is not reachable: ", remote.Name), err.Error())
 		notify(remote.Name, fmt.Sprintf("host %s is not reachable: %v", remote.Name, err), remote.Alerts)
+		output += fmt.Sprintf("  duration: %.2fs", time.Since(now).Seconds())
 		fmt.Print(output)
 		resChan <- &HostResult{
 			NbCheckTotal: nbChecks,
@@ -303,6 +308,9 @@ func CheckRemote(remote *Remote, parallel bool, resChan chan *HostResult, doneFu
 
 	// wait for result processing to end
 	errCnt := <-endChan
+
+	// add duration
+	output += fmt.Sprintf("  duration: %.2fs", time.Since(now).Seconds())
 
 	// print output
 	fmt.Print(output)

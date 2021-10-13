@@ -87,6 +87,10 @@ func cmdCheck(configs []string) (int, int, int, int) {
 	checksParallel := cfg.Settings.ChecksParallel
 	globalAlert, _ := alert.GetAlert(cfg.Settings.GlobalAlert.Type, cfg.Settings.GlobalAlert.Options)
 
+	log.Debugf("hosts parallel: %t", hostsParallel)
+	log.Debugf("checks parallel: %t", checksParallel)
+	log.Debugf("global alert: %v", globalAlert)
+
 	var wg sync.WaitGroup
 	ch := make(chan *remote.HostResult, len(remotes))
 
@@ -96,6 +100,7 @@ func cmdCheck(configs []string) (int, int, int, int) {
 	checksCnt := 0
 	for _, r := range remotes {
 		wg.Add(1)
+		log.Debugf("launching checks on %s", r.Name)
 		go remote.CheckRemote(r, checksParallel, ch, &wg)
 		if !hostsParallel {
 			wg.Wait()

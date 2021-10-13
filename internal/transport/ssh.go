@@ -23,10 +23,9 @@ import (
 )
 
 const (
-	protocol       = "tcp"
-	scpCommand     = "scp -tr %s"
-	connRetry      = 3
-	connRetrySleep = 3
+	protocol   = "tcp"
+	scpCommand = "scp -tr %s"
+	connRetry  = 3
 )
 
 // SSH the ssh struct
@@ -327,7 +326,6 @@ func NewSSH(host string, port string, user string, password string, keyfile stri
 		} else {
 			err = fmt.Errorf("ssh connection error (%d/%d): %s", i+1, connRetry, err.Error())
 			log.Debug(err)
-			time.Sleep(connRetrySleep * time.Second)
 		}
 	}
 	if err != nil {
