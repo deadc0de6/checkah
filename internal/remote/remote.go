@@ -14,6 +14,10 @@ import (
 	"sync"
 )
 
+const (
+	maxJobs = 4
+)
+
 var (
 	hostLocalhost = []string{"127.0.0.1", "localhost"}
 )
@@ -218,13 +222,6 @@ func isLocalhost(host string) bool {
 	return false
 }
 
-func runCheck(check check.Check, trans transport.Transport, ch chan *check.Result, wg *sync.WaitGroup) {
-	log.Debugf("running check %s", check.GetDescription())
-	res := check.Run(trans)
-	ch <- res
-	wg.Done()
-}
-
 // CheckRemote runs the check against a remote
 func CheckRemote(remote *Remote, parallel bool, resChan chan *HostResult, doneFunc *sync.WaitGroup) {
 	// create the transport
@@ -256,36 +253,58 @@ func CheckRemote(remote *Remote, parallel bool, resChan chan *HostResult, doneFu
 	// defer closing the sessions
 	defer trans.Close()
 
+	// create the result channel
 	ch := make(chan *check.Result, len(remote.Checks))
-	var wg sync.WaitGroup
+	// create the jobs channel
+	maxJob := 1
+	if parallel {
+		maxJob = maxJobs
+	}
+	jobs := make(chan check.Check, maxJob)
+	// create the end of process channel
+	endChan := make(chan int, 1)
 
-	// perform the checks in parallel
-	errCnt := 0
+	// checker worker
+	// reads checks from jobs channel
+	// and push results to result channel
+	go func() {
+		for check := range jobs {
+			log.Debugf("running check %s", check.GetDescription())
+			res := check.Run(trans)
+			ch <- res
+		}
+		close(ch)
+	}()
+
+	// process results worker
+	// handles the results and construct output
+	go func() {
+		errCnt := 0
+		for res := range ch {
+			if res.Error != nil {
+				// alert
+				errStr := res.Error.Error()
+				output += outputErr(fmt.Sprintf("  [check] %s: ", res.Description), errStr)
+				notify(remote.Name, errStr, remote.Alerts)
+				errCnt++
+			} else {
+				output += outputOk(fmt.Sprintf("  [check] %s: ", res.Description), res.Value)
+			}
+		}
+		endChan <- errCnt
+	}()
+
+	// send the jobs
 	for _, c := range remote.Checks {
-		wg.Add(1)
 		nbChecks++
-		go runCheck(c, trans, ch, &wg)
-		if !parallel {
-			wg.Wait()
-		}
+		jobs <- c
 	}
+	close(jobs)
 
-	wg.Wait()
-	close(ch)
+	// wait for result processing to end
+	errCnt := <-endChan
 
-	// process results
-	for res := range ch {
-		if res.Error != nil {
-			// alert
-			errStr := res.Error.Error()
-			output += outputErr(fmt.Sprintf("  [check] %s: ", res.Description), errStr)
-			notify(remote.Name, errStr, remote.Alerts)
-			errCnt++
-		} else {
-			output += outputOk(fmt.Sprintf("  [check] %s: ", res.Description), res.Value)
-		}
-	}
-
+	// print output
 	fmt.Print(output)
 	resChan <- &HostResult{
 		NbCheckTotal: nbChecks,

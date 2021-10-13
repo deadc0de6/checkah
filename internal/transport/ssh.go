@@ -183,8 +183,10 @@ func (t *SSH) Copy(localPath string, remotePath string, rights string) error {
 func (t *SSH) Execute(cmd string) (string, string, error) {
 	session, err := t.client.NewSession()
 	if err != nil {
+		log.Debugf("SSH new session for command \"%s\" failed: %v", cmd, err)
 		return "", "", err
 	}
+	log.Debugf("SSH new session opened for: \"%s\"", cmd)
 	defer session.Close()
 
 	var stdout bytes.Buffer
