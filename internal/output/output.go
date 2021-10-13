@@ -14,6 +14,8 @@ func GetOutput(name string, options map[string]string) (Output, error) {
 	switch name {
 	case "stdout":
 		return NewStdout(options)
+	case "influxdb":
+		return NewInfluxdb(options)
 	}
 	return nil, fmt.Errorf("no such output: %s", name)
 }
