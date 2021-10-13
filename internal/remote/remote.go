@@ -6,13 +6,14 @@ import (
 	"checkah/internal/alert"
 	"checkah/internal/check"
 	"checkah/internal/config"
+	"checkah/internal/output"
 	"checkah/internal/transport"
 	"fmt"
+	"github.com/fatih/color"
 	log "github.com/sirupsen/logrus"
 	"os"
 	"strconv"
 	"sync"
-	"time"
 )
 
 const (
@@ -208,8 +209,8 @@ func notify(name string, content string, alerts []alert.Alert) {
 		err := a.Notify(line)
 		if err != nil {
 			c := fmt.Sprintf("notify \"%s\" error: ", a.GetDescription())
-			out := outputErr(c, err.Error())
-			fmt.Print(out)
+			col := color.New(color.FgRed)
+			fmt.Print(c + col.Sprintln(err.Error()))
 		}
 	}
 }
@@ -224,16 +225,13 @@ func isLocalhost(host string) bool {
 }
 
 // CheckRemote runs the check against a remote
-func CheckRemote(remote *Remote, parallel bool, resChan chan *HostResult, doneFunc *sync.WaitGroup) {
+func CheckRemote(remote *Remote, parallel bool, resChan chan *HostResult, doneFunc *sync.WaitGroup, out output.Output) {
 	// create the transport
 	var trans transport.Transport
 	var err error
-	var output string
 	var nbChecks int
 
-	now := time.Now()
-
-	output += outputTitle(fmt.Sprintf("\nchecking \"%s\" (%s:%s)", remote.Name, remote.Host, remote.Port))
+	outputKey := fmt.Sprintf("%s (%s:%s)", remote.Name, remote.Host, remote.Port)
 
 	log.Debugf("connecting to %s...", remote.Name)
 	if isLocalhost(remote.Host) {
@@ -243,10 +241,9 @@ func CheckRemote(remote *Remote, parallel bool, resChan chan *HostResult, doneFu
 	}
 
 	if err != nil {
-		output += outputErr(fmt.Sprintf("  host \"%s\" is not reachable: ", remote.Name), err.Error())
+		out.StackErr(outputKey, "not reachable", err.Error())
 		notify(remote.Name, fmt.Sprintf("host %s is not reachable: %v", remote.Name, err), remote.Alerts)
-		output += fmt.Sprintf("  duration: %.2fs", time.Since(now).Seconds())
-		fmt.Print(output)
+		out.Flush(outputKey)
 		resChan <- &HostResult{
 			NbCheckTotal: nbChecks,
 			NbCheckError: 1,
@@ -289,11 +286,11 @@ func CheckRemote(remote *Remote, parallel bool, resChan chan *HostResult, doneFu
 			if res.Error != nil {
 				// alert
 				errStr := res.Error.Error()
-				output += outputErr(fmt.Sprintf("  [check] %s: ", res.Description), errStr)
+				out.StackErr(outputKey, res.Description, errStr)
 				notify(remote.Name, errStr, remote.Alerts)
 				errCnt++
 			} else {
-				output += outputOk(fmt.Sprintf("  [check] %s: ", res.Description), res.Value)
+				out.StackOk(outputKey, res.Description, res.Value)
 			}
 		}
 		endChan <- errCnt
@@ -309,11 +306,8 @@ func CheckRemote(remote *Remote, parallel bool, resChan chan *HostResult, doneFu
 	// wait for result processing to end
 	errCnt := <-endChan
 
-	// add duration
-	output += fmt.Sprintf("  duration: %.2fs", time.Since(now).Seconds())
-
 	// print output
-	fmt.Print(output)
+	out.Flush(outputKey)
 	resChan <- &HostResult{
 		NbCheckTotal: nbChecks,
 		NbCheckError: errCnt,

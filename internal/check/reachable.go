@@ -29,7 +29,7 @@ func (c *Reachable) Run(t transport.Transport) *Result {
 	if err != nil {
 		return c.returnCheck("", fmt.Errorf("host is NOT reachable: %v", err))
 	}
-	return c.returnCheck("ok", nil)
+	return c.returnCheck("yes", nil)
 }
 
 // GetName returns the check name

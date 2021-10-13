@@ -5,6 +5,7 @@ package main
 import (
 	"checkah/internal/alert"
 	"checkah/internal/config"
+	"checkah/internal/output"
 	"checkah/internal/remote"
 	"fmt"
 	"github.com/docopt/docopt-go"
@@ -94,6 +95,9 @@ func cmdCheck(configs []string) (int, int, int, int) {
 	var wg sync.WaitGroup
 	ch := make(chan *remote.HostResult, len(remotes))
 
+	// create the output
+	out, _ := output.GetOutput("stdout", nil)
+
 	// check all hosts
 	errCnt := 0
 	hostErrCnt := 0
@@ -101,7 +105,7 @@ func cmdCheck(configs []string) (int, int, int, int) {
 	for _, r := range remotes {
 		wg.Add(1)
 		log.Debugf("launching checks on %s", r.Name)
-		go remote.CheckRemote(r, checksParallel, ch, &wg)
+		go remote.CheckRemote(r, checksParallel, ch, &wg, out)
 		if !hostsParallel {
 			wg.Wait()
 		}
