@@ -85,7 +85,7 @@ func NewCheckProcess(options map[string]string) (*Process, error) {
 	}
 
 	c := Process{
-		command: fmt.Sprintf("pgrep %s", pattern),
+		command: fmt.Sprintf("pgrep -f %s", pattern),
 		invert:  invert,
 		pattern: pattern,
 		options: options,
