@@ -64,6 +64,9 @@ profiles:
   - type: loadavg
     options:
       load_15min: "1"
+  - type: uptime
+    options:
+      days: "180"
   - type: process
     options:
       pattern: sshd
@@ -178,6 +181,8 @@ The following checks are available:
   * *limit_1min*: if load average over 1 min crosses this value, an alert is triggered
   * *limit_5min*: if load average over 5 min crosses this value, an alert is triggered
   * *limit_15min*: if load average over 15 min crosses this value, an alert is triggered
+* **uptime**: Check uptime
+  * *days*: if uptime is above this value, an alert is triggered
 * **memory**: check memory usage
   * *limit_mem*: if memory use percent crosses this value, an alert is triggered
   * *limit_swap*: if swap use percent crosses this value, an alert is triggered

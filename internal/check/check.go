@@ -43,6 +43,8 @@ func GetCheck(name string, options map[string]string) (Check, error) {
 		return NewCheckScript(options)
 	case "command":
 		return NewCheckCommand(options)
+	case "uptime":
+		return NewCheckUptime(options)
 	}
 	return nil, fmt.Errorf("no such check: %s", name)
 }
