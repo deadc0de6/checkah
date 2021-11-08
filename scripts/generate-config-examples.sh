@@ -5,7 +5,22 @@ cwd=`pwd`
 
 cd ${cur}/..
 
-bin/checkah example --format=json > configs/example.json
-bin/checkah example --format=yaml > configs/example.yaml
-bin/checkah example --format=json --local > configs/localhost.json
-bin/checkah example --format=yaml --local > configs/localhost.yaml
+fmt="json"
+cfg="configs/example.${fmt}"
+echo "generate \"${cfg}\" in ${fmt}"
+bin/checkah example --format=${fmt} > ${cfg}
+
+fmt="yaml"
+cfg="configs/example.${fmt}"
+echo "generate \"${cfg}\" in ${fmt}"
+bin/checkah example --format=${fmt} > ${cfg}
+
+fmt="json"
+cfg="configs/localhost.${fmt}"
+echo "generate \"${cfg}\" in ${fmt}"
+bin/checkah example --format=${fmt} --local > ${cfg}
+
+fmt="yaml"
+cfg="configs/localhost.${fmt}"
+echo "generate \"${cfg}\" in ${fmt}"
+bin/checkah example --format=${fmt} --local > ${cfg}

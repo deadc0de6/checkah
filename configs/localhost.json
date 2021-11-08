@@ -71,6 +71,13 @@
             "port": "22"
           },
           "type": "tcp"
+        },
+        {
+          "disable": false,
+          "options": {
+            "days": "180"
+          },
+          "type": "uptime"
         }
       ],
       "extend": "",

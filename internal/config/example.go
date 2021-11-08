@@ -77,6 +77,13 @@ func createLocalhostConfig() *Config {
 				"port": "22",
 			},
 		},
+		Check{
+			Type:    "uptime",
+			Disable: false,
+			Options: map[string]string{
+				"days": "180",
+			},
+		},
 	}
 
 	// create alerts
@@ -217,6 +224,13 @@ func createExampleConfig() *Config {
 			Disable: false,
 			Options: map[string]string{
 				"port": "22",
+			},
+		},
+		Check{
+			Type:    "uptime",
+			Disable: false,
+			Options: map[string]string{
+				"days": "180",
 			},
 		},
 	}
