@@ -202,10 +202,10 @@ func PrintRemotes(remotes []*Remote) {
 	}
 }
 
-func notify(name string, content string, alerts []alert.Alert) {
+func notify(host string, content string, alerts []alert.Alert) {
 	for _, a := range alerts {
 		log.Debugf("notify with %s", a.GetDescription())
-		line := fmt.Sprintf("ALERT \"%s\" - %s", name, content)
+		line := fmt.Sprintf("ALERT \"%s\" - %s", host, content)
 		err := a.Notify(line)
 		if err != nil {
 			c := fmt.Sprintf("notify \"%s\" error: ", a.GetDescription())
@@ -284,10 +284,11 @@ func CheckRemote(remote *Remote, parallel bool, resChan chan *HostResult, doneFu
 		errCnt := 0
 		for res := range ch {
 			if res.Error != nil {
-				// alert
-				errStr := res.Error.Error()
-				out.StackErr(outputKey, res.Description, errStr)
+				// alert notification
+				errStr := fmt.Sprintf("%s: %s", res.Description, res.Error)
 				notify(remote.Name, errStr, remote.Alerts)
+				// output
+				out.StackErr(outputKey, res.Description, res.Error.Error())
 				errCnt++
 			} else {
 				out.StackOk(outputKey, res.Description, res.Value)
