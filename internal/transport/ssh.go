@@ -233,6 +233,16 @@ func (t *SSH) Close() {
 	}
 }
 
+// check remote service is listening
+func checkDialOnError(remote string, timeout int) error {
+	c, err := net.DialTimeout(protocol, remote, time.Duration(timeout)*time.Second)
+	if c != nil {
+		log.Debugf("%s service is reachable", remote)
+		defer c.Close()
+	}
+	return err
+}
+
 // NewSSH creates an SSH instance
 func NewSSH(host string, port string, user string, password string, keyfile string, timeout int, insecure bool) (*SSH, error) {
 	var auths []ssh.AuthMethod
@@ -324,7 +334,13 @@ func NewSSH(host string, port string, user string, password string, keyfile stri
 		if err == nil {
 			break
 		} else {
-			err = fmt.Errorf("ssh connection error (%d/%d): %s", i+1, connRetry, err.Error())
+			// connection error
+			dialErr := checkDialOnError(remote, timeout)
+			if dialErr != nil {
+				err = fmt.Errorf("SSH connection error: %s", err.Error())
+			} else {
+				err = fmt.Errorf("SSH connection error while service is reachable: %s", err.Error())
+			}
 			log.Debug(err)
 		}
 	}
