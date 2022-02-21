@@ -18,6 +18,9 @@ type Disk struct {
 }
 
 func (c *Disk) getValue(percent string) (int, error) {
+	if len(percent) < 1 {
+		return -1, fmt.Errorf("empty percent value")
+	}
 	i := percent[:len(percent)-1]
 	val, err := strconv.Atoi(i)
 	if err != nil {
@@ -37,8 +40,14 @@ func (c *Disk) Run(t transport.Transport) *Result {
 	for _, line := range lines {
 		fields := strings.Split(line, " ")
 		if fields[len(fields)-1] == c.mountPoint {
-			// Use percent
-			value := fields[len(fields)-2]
+			// find first percent value
+			var value = ""
+			for _, f := range fields {
+				if strings.Contains(f, "%") {
+					value = f
+					break
+				}
+			}
 			v, err := c.getValue(value)
 			if err != nil {
 				return c.returnCheck("", err)

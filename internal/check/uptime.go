@@ -38,19 +38,32 @@ func (c *Uptime) Run(t transport.Transport) *Result {
 	if len(lines) < 1 {
 		return c.returnCheck("", fmt.Errorf("getting uptime failed"))
 	}
-	seconds := lines[0]
 
-	val, err := strconv.ParseFloat(seconds, 64)
-	if err != nil {
-		return c.returnCheck("", err)
+	dt := lines[0]
+	fields := strings.Split(dt, ":")
+	var h, m, s int
+	if len(fields) > 2 {
+		_, err := fmt.Sscanf(dt, "%d:%d:%d", &h, &m, &s)
+		if err != nil {
+			return c.returnCheck("", err)
+		}
+	} else {
+		_, err := fmt.Sscanf(dt, "%d:%d", &h, &m)
+		s = 0
+		if err != nil {
+			return c.returnCheck("", err)
+		}
 	}
 
-	nbDays := int(int(val) / 60 / 60 / 24)
-	if nbDays > c.limitDays {
-		return c.returnCheck("", fmt.Errorf("uptime above %d days: %d days", c.limitDays, nbDays))
+	// transform to days
+	var nbDays float32
+	nbDays = float32(h) / 24.0
+	nbDays += float32(m) / 60.0 / 24.0
+	if int(nbDays) > c.limitDays {
+		return c.returnCheck("", fmt.Errorf("uptime above %d days: %.2f days", c.limitDays, nbDays))
 	}
 
-	return c.returnCheck(fmt.Sprintf("%d days", nbDays), nil)
+	return c.returnCheck(fmt.Sprintf("%.2f days", nbDays), nil)
 }
 
 // GetName returns the check name
@@ -81,7 +94,8 @@ func NewCheckUptime(options map[string]string) (*Uptime, error) {
 	}
 
 	c := Uptime{
-		command:   "cat /proc/uptime",
+		//command:   "cat /proc/uptime",
+		command:   "uptime",
 		limitDays: days,
 		options:   options,
 	}

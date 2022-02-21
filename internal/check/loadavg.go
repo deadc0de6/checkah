@@ -5,6 +5,7 @@ package check
 import (
 	"checkah/internal/transport"
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -36,17 +37,19 @@ func (c *Loadavg) Run(t transport.Transport) *Result {
 		return c.returnCheck("", err)
 	}
 
-	lines := strings.Split(stdout, "\n")
-	if len(lines) < 1 {
-		return c.returnCheck("", fmt.Errorf("getting loadavg failed"))
-	}
-	line := lines[0]
-	fields := strings.Split(line, " ")
-	if len(fields) < 3 {
+	r, _ := regexp.Compile("load averages: ")
+	idx := r.FindStringIndex(stdout)
+	if len(idx) < 2 {
 		return c.returnCheck("", fmt.Errorf("getting loadavg failed"))
 	}
 
-	val1min, err := strconv.ParseFloat(fields[0], 64)
+	fields := strings.Split(stdout[idx[1]:], " ")
+
+	val1minStr := strings.TrimSuffix(fields[0], ",")
+	val5minStr := strings.TrimSuffix(fields[1], ",")
+	val15minStr := strings.TrimSuffix(fields[2], "\n")
+
+	val1min, err := strconv.ParseFloat(val1minStr, 64)
 	if err != nil {
 		return c.returnCheck("", err)
 	}
@@ -54,7 +57,7 @@ func (c *Loadavg) Run(t transport.Transport) *Result {
 		return c.returnCheck("", fmt.Errorf("1 min load average above %.2f: %.2f", c.limitOneMin, val1min))
 	}
 
-	val5min, err := strconv.ParseFloat(fields[1], 64)
+	val5min, err := strconv.ParseFloat(val5minStr, 64)
 	if err != nil {
 		return c.returnCheck("", err)
 	}
@@ -62,7 +65,7 @@ func (c *Loadavg) Run(t transport.Transport) *Result {
 		return c.returnCheck("", fmt.Errorf("5 min load average above %.2f: %.2f", c.limitFiveMin, val5min))
 	}
 
-	val15min, err := strconv.ParseFloat(fields[2], 64)
+	val15min, err := strconv.ParseFloat(val15minStr, 64)
 	if err != nil {
 		return c.returnCheck("", err)
 	}
@@ -121,7 +124,7 @@ func NewCheckLoadAvg(options map[string]string) (*Loadavg, error) {
 	}
 
 	c := Loadavg{
-		command:         "cat /proc/loadavg",
+		command:         "uptime",
 		limitOneMin:     limitOne,
 		limitFiveMin:    limitFive,
 		limitFifteenMin: limitFifteen,
