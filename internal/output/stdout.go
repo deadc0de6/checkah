@@ -2,8 +2,9 @@ package output
 
 import (
 	"fmt"
-	"github.com/fatih/color"
 	"sync"
+
+	"github.com/fatih/color"
 )
 
 // Stdout struct
@@ -23,11 +24,13 @@ func outputErr(pre string, str string) string {
 }
 
 func checkPre(ok bool) string {
+	pre := "ok"
 	col := color.New(color.FgGreen)
 	if !ok {
+		pre = "ERROR"
 		col = color.New(color.FgRed)
 	}
-	return "[" + col.Sprintf("check") + "]"
+	return fmt.Sprintf("[%s]", col.Sprintf(pre))
 }
 
 func outputTitle(str string) string {
