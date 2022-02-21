@@ -86,7 +86,7 @@ profiles:
     options:
       days: "180"
     type: uptime
-  extend: ""
+  extend: null
   name: profile1
 - alerts: null
   checks:
@@ -94,7 +94,8 @@ profiles:
     options:
       port: "443"
     type: tcp
-  extend: profile1
+  extend:
+  - profile1
   name: profile2
 settings:
   checks-parallel: true

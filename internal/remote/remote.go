@@ -9,11 +9,12 @@ import (
 	"checkah/internal/output"
 	"checkah/internal/transport"
 	"fmt"
-	"github.com/fatih/color"
-	log "github.com/sirupsen/logrus"
 	"os"
 	"strconv"
 	"sync"
+
+	"github.com/fatih/color"
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -101,15 +102,17 @@ func ToRemote(cfg *config.Config) ([]*Remote, error) {
 			if !ok {
 				return nil, fmt.Errorf("unknown profile named \"%s\"", name)
 			}
-			// add other profile
-			name = profile.Extend
-			o, ok := profiles[name]
-			if !ok {
-				return nil, fmt.Errorf("unknown profile named \"%s\"", name)
-			}
 
-			p.checks = append(p.checks, o.checks...)
-			p.alerts = append(p.alerts, o.alerts...)
+			// loop
+			for _, other := range profile.Extend {
+				// add other profile checks and alerts
+				o, ok := profiles[other]
+				if !ok {
+					return nil, fmt.Errorf("unknown profile named \"%s\" in extend", name)
+				}
+				p.checks = append(p.checks, o.checks...)
+				p.alerts = append(p.alerts, o.alerts...)
+			}
 		}
 	}
 

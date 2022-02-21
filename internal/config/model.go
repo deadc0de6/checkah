@@ -32,10 +32,10 @@ type Host struct {
 
 // Profile profile block content
 type Profile struct {
-	Name   string  `mapstructure:"name" json:"name"`
-	Checks []Check `mapstructure:"checks" json:"checks"`
-	Alerts []Alert `mapstructure:"alerts" json:"alerts"`
-	Extend string  `mapstructure:"extend" json:"extend"`
+	Name   string   `mapstructure:"name" json:"name"`
+	Checks []Check  `mapstructure:"checks" json:"checks"`
+	Alerts []Alert  `mapstructure:"alerts" json:"alerts"`
+	Extend []string `mapstructure:"extend" json:"extend"`
 }
 
 // Check profile check block content

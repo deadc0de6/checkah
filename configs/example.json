@@ -133,7 +133,7 @@
           "type": "uptime"
         }
       ],
-      "extend": "",
+      "extend": null,
       "name": "profile1"
     },
     {
@@ -147,7 +147,9 @@
           "type": "tcp"
         }
       ],
-      "extend": "profile1",
+      "extend": [
+        "profile1"
+      ],
       "name": "profile2"
     }
   ],

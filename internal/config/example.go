@@ -21,7 +21,7 @@ func createLocalhostConfig() *Config {
 
 	// create the config hosts block
 	hosts := []Host{
-		Host{
+		{
 			Name:              "localhost",
 			Host:              "127.0.0.1",
 			Port:              "22",
@@ -39,7 +39,7 @@ func createLocalhostConfig() *Config {
 
 	// create profile1 checks
 	profile1Checks := []Check{
-		Check{
+		{
 			Type:    "disk",
 			Disable: false,
 			Options: map[string]string{
@@ -47,21 +47,21 @@ func createLocalhostConfig() *Config {
 				"limit": "80",
 			},
 		},
-		Check{
+		{
 			Type:    "loadavg",
 			Disable: false,
 			Options: map[string]string{
 				"load_15min": "1",
 			},
 		},
-		Check{
+		{
 			Type:    "process",
 			Disable: false,
 			Options: map[string]string{
 				"pattern": "sshd",
 			},
 		},
-		Check{
+		{
 			Type:    "memory",
 			Disable: false,
 			Options: map[string]string{
@@ -70,14 +70,14 @@ func createLocalhostConfig() *Config {
 				"limit_total": "90",
 			},
 		},
-		Check{
+		{
 			Type:    "tcp",
 			Disable: false,
 			Options: map[string]string{
 				"port": "22",
 			},
 		},
-		Check{
+		{
 			Type:    "uptime",
 			Disable: false,
 			Options: map[string]string{
@@ -88,14 +88,14 @@ func createLocalhostConfig() *Config {
 
 	// create alerts
 	profile1Alerts := []Alert{
-		Alert{
+		{
 			Type:    "file",
 			Disable: false,
 			Options: map[string]string{
 				"path": "/tmp/alerts.txt",
 			},
 		},
-		Alert{
+		{
 			Type:    "command",
 			Disable: false,
 			Options: map[string]string{
@@ -106,7 +106,7 @@ func createLocalhostConfig() *Config {
 
 	// create the profiles block
 	profiles := []Profile{
-		Profile{
+		{
 			Name:   "default",
 			Checks: profile1Checks,
 			Alerts: profile1Alerts,
@@ -140,7 +140,7 @@ func createExampleConfig() *Config {
 
 	// create the config hosts block
 	hosts := []Host{
-		Host{
+		{
 			Name:              "local",
 			Host:              "127.0.0.1",
 			Port:              "22",
@@ -154,7 +154,7 @@ func createExampleConfig() *Config {
 				"profile1",
 			},
 		},
-		Host{
+		{
 			Name:              "remote",
 			Host:              "10.0.0.1",
 			Port:              "22",
@@ -172,7 +172,7 @@ func createExampleConfig() *Config {
 
 	// create profile1 checks
 	profile1Checks := []Check{
-		Check{
+		{
 			Type:    "disk",
 			Disable: false,
 			Options: map[string]string{
@@ -180,7 +180,7 @@ func createExampleConfig() *Config {
 				"limit": "80",
 			},
 		},
-		Check{
+		{
 			Type:    "disk",
 			Disable: false,
 			Options: map[string]string{
@@ -188,21 +188,21 @@ func createExampleConfig() *Config {
 				"limit": "80",
 			},
 		},
-		Check{
+		{
 			Type:    "loadavg",
 			Disable: false,
 			Options: map[string]string{
 				"load_15min": "1",
 			},
 		},
-		Check{
+		{
 			Type:    "process",
 			Disable: false,
 			Options: map[string]string{
 				"pattern": "sshd",
 			},
 		},
-		Check{
+		{
 			Type:    "process",
 			Disable: false,
 			Options: map[string]string{
@@ -210,7 +210,7 @@ func createExampleConfig() *Config {
 				"invert":  "yes",
 			},
 		},
-		Check{
+		{
 			Type:    "memory",
 			Disable: false,
 			Options: map[string]string{
@@ -219,14 +219,14 @@ func createExampleConfig() *Config {
 				"limit_total": "90",
 			},
 		},
-		Check{
+		{
 			Type:    "tcp",
 			Disable: false,
 			Options: map[string]string{
 				"port": "22",
 			},
 		},
-		Check{
+		{
 			Type:    "uptime",
 			Disable: false,
 			Options: map[string]string{
@@ -237,14 +237,14 @@ func createExampleConfig() *Config {
 
 	// create profile1 alerts
 	profile1Alerts := []Alert{
-		Alert{
+		{
 			Type:    "file",
 			Disable: false,
 			Options: map[string]string{
 				"path": "/tmp/alerts.txt",
 			},
 		},
-		Alert{
+		{
 			Type:    "webhook",
 			Disable: false,
 			Options: map[string]string{
@@ -255,14 +255,14 @@ func createExampleConfig() *Config {
 				"value1":  "val2",
 			},
 		},
-		Alert{
+		{
 			Type:    "command",
 			Disable: false,
 			Options: map[string]string{
 				"command": "notify-send -u critical",
 			},
 		},
-		Alert{
+		{
 			Type:    "email",
 			Disable: false,
 			Options: map[string]string{
@@ -278,7 +278,7 @@ func createExampleConfig() *Config {
 
 	// create profile2 checks
 	profile2Checks := []Check{
-		Check{
+		{
 			Type:    "tcp",
 			Disable: false,
 			Options: map[string]string{
@@ -289,15 +289,15 @@ func createExampleConfig() *Config {
 
 	// create the profiles block
 	profiles := []Profile{
-		Profile{
+		{
 			Name:   "profile1",
 			Checks: profile1Checks,
 			Alerts: profile1Alerts,
 		},
-		Profile{
+		{
 			Name:   "profile2",
 			Checks: profile2Checks,
-			Extend: "profile1",
+			Extend: []string{"profile1"},
 		},
 	}
 

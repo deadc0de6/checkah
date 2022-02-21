@@ -48,7 +48,7 @@ profiles:
     options:
       days: "180"
     type: uptime
-  extend: ""
+  extend: null
   name: default
 settings:
   checks-parallel: true

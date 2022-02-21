@@ -162,7 +162,7 @@ and checks are run against localhost.
 A list of profiles for monitoring hosts
 
 * **name**: arbitrary name to identify this profile
-* **extend**: name of another profile to include in this one (optional)
+* **extend**: list of other profiles to include in this one (optional)
 * **checks**: a list of checks (see below for the available checks)
   * *type*: the check type
   * *options*: the check options

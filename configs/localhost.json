@@ -80,7 +80,7 @@
           "type": "uptime"
         }
       ],
-      "extend": "",
+      "extend": null,
       "name": "default"
     }
   ],
