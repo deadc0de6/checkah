@@ -37,7 +37,8 @@ func (c *Loadavg) Run(t transport.Transport) *Result {
 		return c.returnCheck("", err)
 	}
 
-	r, _ := regexp.Compile("load averages: ")
+	stdout = strings.TrimSpace(stdout)
+	r, _ := regexp.Compile("load average[s]*: ")
 	idx := r.FindStringIndex(stdout)
 	if len(idx) < 2 {
 		return c.returnCheck("", fmt.Errorf("getting loadavg failed"))

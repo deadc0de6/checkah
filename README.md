@@ -185,8 +185,6 @@ The following checks are available:
   * *days*: if uptime is above this value, an alert is triggered
 * **memory**: check memory usage
   * *limit_mem*: if memory use percent crosses this value, an alert is triggered
-  * *limit_swap*: if swap use percent crosses this value, an alert is triggered
-  * *limit_total*: if total memory use percent crosses this value, an alert is triggered
 * **process**: check if a process is running
   * *pattern*: pattern to match process name
   * *invert*: if value "yes", alert if process is present instead of absent (optional)

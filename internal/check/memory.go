@@ -12,15 +12,14 @@ import (
 
 // Memory the memory struct
 type Memory struct {
-	command       string
-	limitUseMem   int
-	limitUseSwap  int
-	limitUseTotal int
-	options       map[string]string
+	command     string
+	limitUseMem int
+	checker     func(string) (int, error)
+	options     map[string]string
 }
 
 func (c *Memory) returnCheck(value string, err error) *Result {
-	limit := fmt.Sprintf("used mem:%d%% swap:%d%% total:%d%%", c.limitUseMem, c.limitUseSwap, c.limitUseTotal)
+	limit := fmt.Sprintf("%d%%", c.limitUseMem)
 	return &Result{
 		Name:        c.GetName(),
 		Description: c.GetDescription(),
@@ -69,6 +68,33 @@ func getPercent(output string, lineOffset int) (int, error) {
 	return val, nil
 }
 
+func memoryFromMemoryPressure(stdout string) (int, error) {
+	var val string
+	lines := strings.Split(stdout, "\n")
+	for _, line := range lines {
+		if strings.HasPrefix(line, "System-wide memory free percentage:") {
+			fields := strings.Split(line, ": ")
+			val = fields[1][:len(fields[1])-1]
+			break
+		}
+	}
+
+	i, err := strconv.Atoi(val)
+	if err != nil {
+		return 0, fmt.Errorf("cannot parse memory use")
+	}
+	return 100 - i, nil
+}
+
+func memoryFromFree(stdout string) (int, error) {
+	// mem
+	memVal, err := getPercent(stdout, 1)
+	if err != nil {
+		return 0, err
+	}
+	return memVal, nil
+}
+
 // Run executes the check
 func (c *Memory) Run(t transport.Transport) *Result {
 	stdout, _, err := t.Execute(c.command)
@@ -76,34 +102,16 @@ func (c *Memory) Run(t transport.Transport) *Result {
 		return c.returnCheck("", err)
 	}
 
-	// mem
-	memVal, err := getPercent(stdout, 1)
+	val, err := c.checker(stdout)
 	if err != nil {
 		return c.returnCheck("", err)
 	}
-	if c.limitUseMem > -1 && memVal > c.limitUseMem {
-		return c.returnCheck("", fmt.Errorf("memory used is above %d%%: %d%%", c.limitUseMem, memVal))
+
+	if val > c.limitUseMem {
+		return c.returnCheck("", fmt.Errorf("memory used is above %d%%: %d%%", c.limitUseMem, val))
 	}
 
-	// swap
-	swapVal, err := getPercent(stdout, 2)
-	if err != nil {
-		return c.returnCheck("", err)
-	}
-	if c.limitUseSwap > -1 && swapVal > c.limitUseSwap {
-		return c.returnCheck("", fmt.Errorf("swap usage is above %d%%: %d%%", c.limitUseSwap, swapVal))
-	}
-
-	// total
-	totalVal, err := getPercent(stdout, 3)
-	if err != nil {
-		return c.returnCheck("", err)
-	}
-	if c.limitUseTotal > -1 && totalVal > c.limitUseTotal {
-		return c.returnCheck("", fmt.Errorf("total memory usage is above %d%%: %d%%", c.limitUseTotal, totalVal))
-	}
-
-	return c.returnCheck(fmt.Sprintf("used mem:%d%% swap:%d%% total:%d%%", memVal, swapVal, totalVal), nil)
+	return c.returnCheck(fmt.Sprintf("%d%%", val), nil)
 }
 
 // GetName returns the check name
@@ -133,32 +141,18 @@ func NewCheckMemory(options map[string]string) (*Memory, error) {
 		limitMem = i
 	}
 
-	limitSwap := -1
-	v, ok = options["limit_swap"]
-	if ok {
-		i, err := strconv.Atoi(v)
-		if err != nil {
-			return nil, err
-		}
-		limitSwap = i
-	}
-
-	limitTotal := -1
-	v, ok = options["limit_total"]
-	if ok {
-		i, err := strconv.Atoi(v)
-		if err != nil {
-			return nil, err
-		}
-		limitTotal = i
+	cmd := "free -t"
+	checker := memoryFromFree
+	if !cmdExist("free") {
+		cmd = "memory_pressure"
+		checker = memoryFromMemoryPressure
 	}
 
 	c := Memory{
-		command:       "free -t",
-		limitUseMem:   limitMem,
-		limitUseSwap:  limitSwap,
-		limitUseTotal: limitTotal,
-		options:       options,
+		command:     cmd,
+		limitUseMem: limitMem,
+		checker:     checker,
+		options:     options,
 	}
 
 	return &c, nil

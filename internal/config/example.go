@@ -65,9 +65,7 @@ func createLocalhostConfig() *Config {
 			Type:    "memory",
 			Disable: false,
 			Options: map[string]string{
-				"limit_mem":   "90",
-				"limit_swap":  "90",
-				"limit_total": "90",
+				"limit_mem": "90",
 			},
 		},
 		{
@@ -214,9 +212,7 @@ func createExampleConfig() *Config {
 			Type:    "memory",
 			Disable: false,
 			Options: map[string]string{
-				"limit_mem":   "90",
-				"limit_swap":  "90",
-				"limit_total": "90",
+				"limit_mem": "90",
 			},
 		},
 		{

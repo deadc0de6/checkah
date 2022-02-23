@@ -5,6 +5,8 @@ package check
 import (
 	"checkah/internal/transport"
 	"fmt"
+	"os"
+	"os/exec"
 )
 
 // Result check result struct
@@ -22,6 +24,16 @@ type Check interface {
 	GetDescription() string
 	Run(transport.Transport) *Result
 	GetOptions() map[string]string
+}
+
+func cmdExist(cmd string) bool {
+	_, err := exec.LookPath(cmd)
+	return err == nil
+}
+
+func hasProc() bool {
+	_, err := os.Stat("/proc")
+	return !os.IsNotExist(err)
 }
 
 // GetCheck returns a check instance

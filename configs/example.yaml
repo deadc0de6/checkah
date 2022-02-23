@@ -75,8 +75,6 @@ profiles:
   - disable: false
     options:
       limit_mem: "90"
-      limit_swap: "90"
-      limit_total: "90"
     type: memory
   - disable: false
     options:
