@@ -8,11 +8,12 @@ import (
 	"checkah/internal/output"
 	"checkah/internal/remote"
 	"fmt"
+	"os"
+	"sync"
+
 	"github.com/docopt/docopt-go"
 	"github.com/fatih/color"
 	log "github.com/sirupsen/logrus"
-	"os"
-	"sync"
 )
 
 // Switches the command line options
@@ -32,7 +33,7 @@ type Switches struct {
 }
 
 var (
-	version = "0.2.0"
+	version = "0.2.1"
 	usage   = `checkah.
 
 Usage:
