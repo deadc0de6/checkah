@@ -25,4 +25,4 @@ deps:
 env:
 	@go env GO111MODULE=on
 
-.PHONY: build env clean all deps
+.PHONY: build env clean all deps build-all
