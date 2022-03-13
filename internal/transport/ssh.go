@@ -25,7 +25,8 @@ import (
 const (
 	protocol   = "tcp"
 	scpCommand = "scp -tr %s"
-	connRetry  = 3
+	connRetry  = 5
+	retrySleep = 3
 )
 
 // SSH the ssh struct
@@ -339,9 +340,10 @@ func NewSSH(host string, port string, user string, password string, keyfile stri
 			if dialErr != nil {
 				err = fmt.Errorf("SSH connection error: %s", err.Error())
 			} else {
-				err = fmt.Errorf("SSH connection error while service is reachable: %s", err.Error())
+				err = fmt.Errorf("SSH connection error but service is reachable: %s", err.Error())
 			}
 			log.Debug(err)
+			time.Sleep(time.Duration(retrySleep) * time.Second)
 		}
 	}
 	if err != nil {
