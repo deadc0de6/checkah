@@ -8,13 +8,13 @@ MAIN=cmd/checkah/main.go
 all: build
 
 build: env deps
-	@GOBIN=$(GOBIN) GO111MODULE=$(GO111MODULE) go install $(INSTALL_FLAG) ./...
+	@CGO_ENABLED=0 GOBIN=$(GOBIN) GO111MODULE=$(GO111MODULE) go install $(INSTALL_FLAG) ./...
 
 build-all:
-	GO111MODULE=on GOOS=$(OS) GOARCH=arm   go build -v -o ./bin/$(NAME)-$(OS)-arm $(MAIN)
-	GO111MODULE=on GOOS=$(OS) GOARCH=arm64 go build -v -o ./bin/$(NAME)-$(OS)-arm64 $(MAIN)
-	GO111MODULE=on GOOS=$(OS) GOARCH=386   go build -v -o ./bin/$(NAME)-$(OS)-386 $(MAIN)
-	GO111MODULE=on GOOS=$(OS) GOARCH=amd64 go build -v -o ./bin/$(NAME)-$(OS)-amd64 $(MAIN)
+	CGO_ENABLED=0 GO111MODULE=on GOOS=$(OS) GOARCH=arm   go build -v -o ./bin/$(NAME)-$(OS)-arm $(MAIN)
+	CGO_ENABLED=0 GO111MODULE=on GOOS=$(OS) GOARCH=arm64 go build -v -o ./bin/$(NAME)-$(OS)-arm64 $(MAIN)
+	CGO_ENABLED=0 GO111MODULE=on GOOS=$(OS) GOARCH=386   go build -v -o ./bin/$(NAME)-$(OS)-386 $(MAIN)
+	CGO_ENABLED=0 GO111MODULE=on GOOS=$(OS) GOARCH=amd64 go build -v -o ./bin/$(NAME)-$(OS)-amd64 $(MAIN)
 
 clean:
 	@rm -rf $(GOBIN)
