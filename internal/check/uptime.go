@@ -67,8 +67,7 @@ func uptimeFromLoadavg(stdout string) (int, error) {
 	}
 
 	// transform to days
-	var nbDays float32
-	nbDays = float32(h) / 24.0
+	nbDays := float32(h) / 24.0
 	nbDays += float32(m) / 60.0 / 24.0
 	return int(nbDays), nil
 }
