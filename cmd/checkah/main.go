@@ -46,7 +46,7 @@ Usage:
 Options:
   -l --local              Generate localhost config example.
   -f --format=<format>    Output format [default: yaml].
-	-v --verbose            Debug logs.
+  -v --verbose            Debug logs.
   -h --help               Show this screen.
   --version               Show version.`
 )
