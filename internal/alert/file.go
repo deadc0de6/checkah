@@ -5,13 +5,17 @@ package alert
 import (
 	"fmt"
 	"os"
+	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // File alert file struct
 type File struct {
-	path    string
-	options map[string]string
+	path     string
+	truncate bool
+	options  map[string]string
 }
 
 // Notify notifies
@@ -52,9 +56,23 @@ func NewAlertFile(options map[string]string) (*File, error) {
 		return nil, fmt.Errorf("\"path\" option required")
 	}
 
+	truncate := false
+	trunc, ok := options["truncate"]
+	if ok {
+		log.Debugf("truncate value: %s", trunc)
+		truncate = trunc == "1" || strings.ToLower(trunc) == "true"
+	}
+
+	if truncate {
+		// truncate file
+		os.Truncate(path, 0)
+		log.Debugf("truncate %s", path)
+	}
+
 	a := &File{
-		path:    path,
-		options: options,
+		path:     path,
+		truncate: truncate,
+		options:  options,
 	}
 	return a, nil
 }

@@ -199,6 +199,7 @@ The following alerts are available:
 
 * **file**: append to file
   * *path*: file path
+  * *truncate*: a boolean indicating if file is truncated before logging (optional, default `"false"`)
 * **script**: call a script with the alert string as sole argument
   * *path*: script path
 * **webhook**: call a webhook on new alert
