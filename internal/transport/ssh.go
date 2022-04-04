@@ -57,6 +57,11 @@ func checkKnownHosts() (ssh.HostKeyCallback, error) {
 }
 
 func loadAgent() ssh.AuthMethod {
+	path := os.Getenv("SSH_AUTH_SOCK")
+	if len(path) < 1 {
+		log.Debug("SSH no auth socket found")
+		return nil
+	}
 	sock, err := net.Dial("unix", os.Getenv("SSH_AUTH_SOCK"))
 	if err != nil {
 		log.Debug(err)
@@ -82,10 +87,11 @@ func loadAgent() ssh.AuthMethod {
 		}
 	*/
 
+	log.Debugf("signers: %#v", a.Signers)
 	return ssh.PublicKeysCallback(a.Signers)
 }
 
-func loadKeyFile(path string) (ssh.Signer, error) {
+func loadKeyfile(path string) (ssh.Signer, error) {
 	key, err := ioutil.ReadFile(path)
 	if err != nil {
 		return nil, err
@@ -296,7 +302,7 @@ func NewSSH(host string, port string, user string, password string, keyfile stri
 
 		if fileExists(keyfile) {
 			log.Debugf("SSH loading keyfile from %s", keyfile)
-			s, err := loadKeyFile(keyfile)
+			s, err := loadKeyfile(keyfile)
 			if err != nil {
 				log.Error(err)
 			} else {
