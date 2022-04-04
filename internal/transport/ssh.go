@@ -26,8 +26,8 @@ import (
 const (
 	protocol   = "tcp"
 	scpCommand = "scp -tr %s"
-	connRetry  = 5
-	retrySleep = 3
+	connRetry  = 3
+	retrySleep = 2
 )
 
 // SSH the ssh struct
@@ -87,7 +87,6 @@ func loadAgent() ssh.AuthMethod {
 		}
 	*/
 
-	log.Debugf("signers: %#v", a.Signers)
 	return ssh.PublicKeysCallback(a.Signers)
 }
 
@@ -365,7 +364,7 @@ func NewSSH(host string, port string, user string, password string, keyfile stri
 			if dialErr != nil {
 				err = fmt.Errorf("SSH connection error: %s", err.Error())
 			} else {
-				err = fmt.Errorf("SSH connection error but service is reachable: %s", err.Error())
+				err = fmt.Errorf("SSH connection error but host is reachable: %s", err.Error())
 			}
 			log.Debug(err)
 			time.Sleep(time.Duration(retrySleep) * time.Second)
