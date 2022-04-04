@@ -19,7 +19,7 @@ You need at least **golang 1.16**
 
 Quick start:
 ```bash
-git install -v github.com/deadc0de6/checkah/cmd/checkah@latest
+go install -v github.com/deadc0de6/checkah/cmd/checkah@latest
 checkah example --format=yaml --local > /tmp/local.yaml
 checkah check /tmp/local.yaml
 ```
@@ -199,7 +199,7 @@ The following alerts are available:
 
 * **file**: append to file
   * *path*: file path
-  * *truncate*: a boolean indicating if file is truncated before logging (optional, default `"false"`)
+  * *truncate*: a boolean indicating if file is truncated before logging (optional, default `false`)
 * **script**: call a script with the alert string as sole argument
   * *path*: script path
 * **webhook**: call a webhook on new alert
