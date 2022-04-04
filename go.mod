@@ -1,4 +1,4 @@
-module checkah
+module github.com/deadc0de6/checkah
 
 go 1.16
 

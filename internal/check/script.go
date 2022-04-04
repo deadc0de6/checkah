@@ -3,11 +3,12 @@
 package check
 
 import (
-	"checkah/internal/transport"
 	"fmt"
 	"os"
 	"path"
 	"strings"
+
+	"github.com/deadc0de6/checkah/internal/transport"
 )
 
 // Script the Script struct

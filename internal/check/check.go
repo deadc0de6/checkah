@@ -3,10 +3,11 @@
 package check
 
 import (
-	"checkah/internal/transport"
 	"fmt"
 	"os"
 	"os/exec"
+
+	"github.com/deadc0de6/checkah/internal/transport"
 )
 
 // Result check result struct

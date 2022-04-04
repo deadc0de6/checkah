@@ -3,10 +3,11 @@
 package check
 
 import (
-	"checkah/internal/transport"
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/deadc0de6/checkah/internal/transport"
 )
 
 // Uptime the uptime struct

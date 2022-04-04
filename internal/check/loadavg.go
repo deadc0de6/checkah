@@ -3,11 +3,12 @@
 package check
 
 import (
-	"checkah/internal/transport"
 	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/deadc0de6/checkah/internal/transport"
 )
 
 // Loadavg the loadavg struct

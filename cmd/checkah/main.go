@@ -3,13 +3,14 @@
 package main
 
 import (
-	"checkah/internal/alert"
-	"checkah/internal/config"
-	"checkah/internal/output"
-	"checkah/internal/remote"
 	"fmt"
 	"os"
 	"sync"
+
+	"github.com/deadc0de6/checkah/internal/alert"
+	"github.com/deadc0de6/checkah/internal/config"
+	"github.com/deadc0de6/checkah/internal/output"
+	"github.com/deadc0de6/checkah/internal/remote"
 
 	"github.com/docopt/docopt-go"
 	"github.com/fatih/color"

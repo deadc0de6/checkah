@@ -15,14 +15,13 @@ Features:
 * multiple alerts (webhooks, email, script, file, ...)
 * multiple checks (disk, memory, loadavg, process, opened ports, ...)
 
+You need at least **golang 1.16**
+
 Quick start:
 ```bash
-## You need golang 1.16
-git clone https://github.com/deadc0de6/checkah
-cd checkah
-make
-./bin/checkah example --format=yaml --local > /tmp/local.yaml
-./bin/checkah check /tmp/local.yaml
+git install -v github.com/deadc0de6/checkah/cmd/checkah@latest
+checkah example --format=yaml --local > /tmp/local.yaml
+checkah check /tmp/local.yaml
 ```
 
 Or pick a binary from the [latest release](https://github.com/deadc0de6/checkah/releases).

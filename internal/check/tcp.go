@@ -3,8 +3,9 @@
 package check
 
 import (
-	"checkah/internal/transport"
 	"fmt"
+
+	"github.com/deadc0de6/checkah/internal/transport"
 )
 
 // Port the port struct

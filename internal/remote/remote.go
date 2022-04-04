@@ -3,15 +3,16 @@
 package remote
 
 import (
-	"checkah/internal/alert"
-	"checkah/internal/check"
-	"checkah/internal/config"
-	"checkah/internal/output"
-	"checkah/internal/transport"
 	"fmt"
 	"os"
 	"strconv"
 	"sync"
+
+	"github.com/deadc0de6/checkah/internal/alert"
+	"github.com/deadc0de6/checkah/internal/check"
+	"github.com/deadc0de6/checkah/internal/config"
+	"github.com/deadc0de6/checkah/internal/output"
+	"github.com/deadc0de6/checkah/internal/transport"
 
 	"github.com/fatih/color"
 	log "github.com/sirupsen/logrus"
