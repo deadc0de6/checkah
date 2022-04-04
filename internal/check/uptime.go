@@ -12,8 +12,6 @@ import (
 
 // Uptime the uptime struct
 type Uptime struct {
-	command   string
-	checker   func(string) (int, error)
 	limitDays int
 	options   map[string]string
 }
@@ -75,13 +73,20 @@ func uptimeFromLoadavg(stdout string) (int, error) {
 
 // Run executes the check
 func (c *Uptime) Run(t transport.Transport) *Result {
-	stdout, _, err := t.Execute(c.command)
+	cmd := "cat /proc/uptime"
+	checker := uptimeFromProc
+	if !hasProc(t) {
+		cmd = "uptime"
+		checker = uptimeFromLoadavg
+	}
+
+	stdout, _, err := t.Execute(cmd)
 	if err != nil {
 		return c.returnCheck("", err)
 	}
 
 	stdout = strings.TrimSpace(stdout)
-	val, err := c.checker(stdout)
+	val, err := checker(stdout)
 	if err != nil {
 		return c.returnCheck("", err)
 	}
@@ -120,18 +125,9 @@ func NewCheckUptime(options map[string]string) (*Uptime, error) {
 		days = i
 	}
 
-	cmd := "cat /proc/uptime"
-	checker := uptimeFromProc
-	if !hasProc() {
-		cmd = "uptime"
-		checker = uptimeFromLoadavg
-	}
-
 	c := Uptime{
-		command:   cmd,
 		limitDays: days,
 		options:   options,
-		checker:   checker,
 	}
 
 	return &c, nil

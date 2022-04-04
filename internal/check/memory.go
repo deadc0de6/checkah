@@ -13,9 +13,7 @@ import (
 
 // Memory the memory struct
 type Memory struct {
-	command     string
 	limitUseMem int
-	checker     func(string) (int, error)
 	options     map[string]string
 }
 
@@ -98,12 +96,19 @@ func memoryFromFree(stdout string) (int, error) {
 
 // Run executes the check
 func (c *Memory) Run(t transport.Transport) *Result {
-	stdout, _, err := t.Execute(c.command)
+	cmd := "free -t"
+	checker := memoryFromFree
+	if !cmdExist("free", t) {
+		cmd = "memory_pressure"
+		checker = memoryFromMemoryPressure
+	}
+
+	stdout, _, err := t.Execute(cmd)
 	if err != nil {
 		return c.returnCheck("", err)
 	}
 
-	val, err := c.checker(stdout)
+	val, err := checker(stdout)
 	if err != nil {
 		return c.returnCheck("", err)
 	}
@@ -142,17 +147,8 @@ func NewCheckMemory(options map[string]string) (*Memory, error) {
 		limitMem = i
 	}
 
-	cmd := "free -t"
-	checker := memoryFromFree
-	if !cmdExist("free") {
-		cmd = "memory_pressure"
-		checker = memoryFromMemoryPressure
-	}
-
 	c := Memory{
-		command:     cmd,
 		limitUseMem: limitMem,
-		checker:     checker,
 		options:     options,
 	}
 

@@ -4,8 +4,6 @@ package check
 
 import (
 	"fmt"
-	"os"
-	"os/exec"
 
 	"github.com/deadc0de6/checkah/internal/transport"
 )
@@ -27,14 +25,14 @@ type Check interface {
 	GetOptions() map[string]string
 }
 
-func cmdExist(cmd string) bool {
-	_, err := exec.LookPath(cmd)
+func cmdExist(cmd string, trans transport.Transport) bool {
+	_, _, err := trans.Execute(fmt.Sprintf("hash %s", cmd))
 	return err == nil
 }
 
-func hasProc() bool {
-	_, err := os.Stat("/proc")
-	return !os.IsNotExist(err)
+func hasProc(trans transport.Transport) bool {
+	_, _, err := trans.Execute("test -d /proc")
+	return err == nil
 }
 
 // GetCheck returns a check instance
