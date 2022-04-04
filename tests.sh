@@ -4,6 +4,11 @@
 
 set -e
 
+# deps
+go install golang.org/x/lint/golint@latest
+go install honnef.co/go/tools/cmd/staticcheck@latest
+
+# tests
 make clean
 make
 go fmt ./...
