@@ -8,10 +8,6 @@ package transport
 import (
 	"bytes"
 	"fmt"
-	log "github.com/sirupsen/logrus"
-	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/agent"
-	"golang.org/x/crypto/ssh/knownhosts"
 	"io"
 	"io/ioutil"
 	"net"
@@ -20,6 +16,11 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
+	"golang.org/x/crypto/ssh"
+	"golang.org/x/crypto/ssh/agent"
+	"golang.org/x/crypto/ssh/knownhosts"
 )
 
 const (
@@ -42,7 +43,7 @@ func fileExists(path string) bool {
 
 func checkKnownHosts() (ssh.HostKeyCallback, error) {
 	path := filepath.Join(os.Getenv("HOME"), ".ssh", "known_hosts")
-	log.Debugf("reading known_hosts file from %s", path)
+	log.Debugf("SSH reading known_hosts file from %s", path)
 
 	f, err := knownhosts.New(path)
 	if err != nil {
@@ -50,7 +51,7 @@ func checkKnownHosts() (ssh.HostKeyCallback, error) {
 	}
 
 	return func(addr string, remote net.Addr, key ssh.PublicKey) error {
-		log.Debugf("checking knownhost for %s (%v)", addr, remote)
+		log.Debugf("SSH checking knownhost for %s (%v)", addr, remote)
 		return f(addr, remote, key)
 	}, nil
 }
@@ -62,14 +63,26 @@ func loadAgent() ssh.AuthMethod {
 		return nil
 	}
 
-	log.Debug("agent socket found")
-	signers := agent.NewClient(sock).Signers
-	if signers != nil {
-		return ssh.PublicKeysCallback(signers)
+	a := agent.NewClient(sock)
+	if a == nil {
+		log.Debug("SSH no signers for agent")
+		return nil
 	}
 
-	log.Debug("no signers for SSH agent")
-	return nil
+	log.Debug("SSH agent socket found")
+
+	/*
+		loadedKeys, err := a.List()
+		if err != nil {
+			log.Debug(err)
+			return nil
+		}
+		for _, key := range loadedKeys {
+			log.Debugf(key.String())
+		}
+	*/
+
+	return ssh.PublicKeysCallback(a.Signers)
 }
 
 func loadKeyFile(path string) (ssh.Signer, error) {
@@ -248,7 +261,7 @@ func checkDialOnError(remote string, timeout int) error {
 func NewSSH(host string, port string, user string, password string, keyfile string, timeout int, insecure bool) (*SSH, error) {
 	var auths []ssh.AuthMethod
 
-	log.Debugf("creating a new ssh connection to %s:%s", host, port)
+	log.Debugf("SSH creating a new connection to %s:%s", host, port)
 
 	if len(host) < 1 {
 		return nil, fmt.Errorf("SSH no host provided")
@@ -264,6 +277,8 @@ func NewSSH(host string, port string, user string, password string, keyfile stri
 	if len(password) > 1 {
 		auths = append(auths, ssh.Password(password))
 		log.Info("SSH password auth method added")
+	} else {
+		log.Debug("SSH no password provided")
 	}
 
 	// set default keyfile if unset
@@ -277,10 +292,10 @@ func NewSSH(host string, port string, user string, password string, keyfile stri
 			keyfile = filepath.Join(os.Getenv("HOME"), keyfile[2:])
 		}
 
-		log.Debugf("keyfile: %s", keyfile)
+		log.Debugf("SSH keyfile: %s", keyfile)
 
 		if fileExists(keyfile) {
-			log.Debugf("loading keyfile from %s", keyfile)
+			log.Debugf("SSH loading keyfile from %s", keyfile)
 			s, err := loadKeyFile(keyfile)
 			if err != nil {
 				log.Error(err)
@@ -290,33 +305,37 @@ func NewSSH(host string, port string, user string, password string, keyfile stri
 					auths = append(auths, ssh.PublicKeys(s))
 				}
 			}
+		} else {
+			log.Debugf("SSH keyfile does not exist: %s", keyfile)
 		}
+	} else {
+		log.Debug("SSH no keyfile found")
 	}
 
 	// add agent as auth method
 	a := loadAgent()
 	if a != nil {
-		log.Debug("adding ssh agent as auth method")
+		log.Debug("SSH adding agent as auth method")
 		auths = append(auths, a)
 	}
 
 	var kn ssh.HostKeyCallback
 	if insecure {
-		log.Debug("insecure knownhost")
+		log.Debug("SSH insecure knownhost")
 		kn = ssh.InsecureIgnoreHostKey()
 	} else {
 		var err error
 		kn, err = checkKnownHosts()
 		if err != nil {
-			log.Debug("knownhost failed: ", err)
+			log.Debug("SSH knownhost failed: ", err)
 			return nil, err
 		}
 	}
 
 	if len(auths) < 1 {
-		return nil, fmt.Errorf("no SSH auths set up")
+		return nil, fmt.Errorf("SSH no auth method found")
 	}
-	log.Debugf("%d auths methods: %#v", len(auths), auths)
+	log.Debugf("SSH %d auth method(s): %#v", len(auths), auths)
 
 	t := &SSH{}
 	t.config = &ssh.ClientConfig{
