@@ -6,20 +6,24 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/spf13/viper"
 	"io/ioutil"
 	"os"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 // PrintConfig prints a config file to stdout
 func PrintConfig(cfg *Config, format string) error {
 	// serialize config
+	log.Debugf("config: %#v", cfg)
 	b, err := json.MarshalIndent(cfg, "", "  ")
 	if err != nil {
 		return err
 	}
 
 	// read struct to viper
+	log.Debugf("config format: %s", format)
 	v := viper.New()
 	v.SetConfigType(format)
 	err = v.ReadConfig(bytes.NewBuffer(b))
