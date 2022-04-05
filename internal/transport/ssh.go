@@ -87,20 +87,28 @@ func loadAgent() ssh.AuthMethod {
 		}
 	*/
 
-	return ssh.PublicKeysCallback(a.Signers)
+	//return ssh.PublicKeysCallback(a.Signers)
+
+	signers, err := a.Signers()
+	if err != nil {
+		log.Debug(err)
+		return nil
+	}
+	return ssh.PublicKeys(signers...)
+
 }
 
-func loadKeyfile(path string) (ssh.Signer, error) {
+func loadKeyfile(path string) ssh.AuthMethod {
 	key, err := ioutil.ReadFile(path)
 	if err != nil {
-		return nil, err
+		return nil
 	}
 
 	signer, err := ssh.ParsePrivateKey(key)
 	if err != nil {
-		return nil, err
+		return nil
 	}
-	return signer, nil
+	return ssh.PublicKeys(signer)
 }
 
 // Mkdir mkdir over ssh
@@ -294,6 +302,7 @@ func NewSSH(host string, port string, user string, password string, keyfile stri
 	// add keyfile as auth method
 	if len(keyfile) > 1 {
 		if strings.HasPrefix(keyfile, "~/") {
+			// handle tild
 			keyfile = filepath.Join(os.Getenv("HOME"), keyfile[2:])
 		}
 
@@ -301,14 +310,9 @@ func NewSSH(host string, port string, user string, password string, keyfile stri
 
 		if fileExists(keyfile) {
 			log.Debugf("SSH loading keyfile from %s", keyfile)
-			s, err := loadKeyfile(keyfile)
-			if err != nil {
-				log.Error(err)
-			} else {
-				k := ssh.PublicKeys(s)
-				if k != nil {
-					auths = append(auths, ssh.PublicKeys(s))
-				}
+			m := loadKeyfile(keyfile)
+			if m != nil {
+				auths = append(auths, m)
 			}
 		} else {
 			log.Debugf("SSH keyfile does not exist: %s", keyfile)
@@ -349,6 +353,7 @@ func NewSSH(host string, port string, user string, password string, keyfile stri
 		HostKeyCallback: kn,
 		Timeout:         time.Duration(timeout) * time.Second,
 	}
+	t.config.SetDefaults()
 
 	var c *ssh.Client
 	var err error
@@ -362,6 +367,7 @@ func NewSSH(host string, port string, user string, password string, keyfile stri
 			// connection error
 			dialErr := checkDialOnError(remote, timeout)
 			if dialErr != nil {
+				// host is NOT reachable
 				err = fmt.Errorf("SSH connection error: %s", err.Error())
 			} else {
 				err = fmt.Errorf("SSH connection error but host is reachable: %s", err.Error())
