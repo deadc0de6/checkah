@@ -43,16 +43,16 @@ func (c *Process) Run(t transport.Transport) *Result {
 	if isRunning {
 		if c.invert {
 			// alert if is running
-			return c.returnCheck("", fmt.Errorf("process \"%s\" is running", c.pattern))
+			return c.returnCheck("", fmt.Errorf("running"))
 		}
-		return c.returnCheck(fmt.Sprintf("process \"%s\" is running", c.pattern), nil)
+		return c.returnCheck(fmt.Sprintf("running"), nil)
 	}
 
 	if c.invert {
-		return c.returnCheck(fmt.Sprintf("process \"%s\" is not running", c.pattern), nil)
+		return c.returnCheck(fmt.Sprintf("not running"), nil)
 	}
 	// alert if is not running
-	return c.returnCheck("", fmt.Errorf("process \"%s\" is not running", c.pattern))
+	return c.returnCheck("", fmt.Errorf("not running"))
 }
 
 // GetName returns the check name

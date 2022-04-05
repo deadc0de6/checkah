@@ -30,9 +30,9 @@ func (c *Port) returnCheck(value string, err error) *Result {
 func (c *Port) Run(t transport.Transport) *Result {
 	_, _, err := t.Execute(c.command)
 	if err != nil {
-		return c.returnCheck("", fmt.Errorf("TCP port \"%s\" is NOT open", c.port))
+		return c.returnCheck("", fmt.Errorf("closed/filtered"))
 	}
-	return c.returnCheck(fmt.Sprintf("TCP port \"%s\" is open", c.port), nil)
+	return c.returnCheck("open", nil)
 }
 
 // GetName returns the check name
