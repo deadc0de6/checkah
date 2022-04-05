@@ -11,7 +11,7 @@ Features:
 
 * agentless
 * check over SSH (password, keyfile, agent)
-* config file based (yaml, json, toml)
+* config file based (yaml, json)
 * multiple alerts (webhooks, email, script, file, ...)
 * multiple checks (disk, memory, loadavg, process, opened ports, ...)
 
@@ -103,7 +103,7 @@ This example config file is available [here](/configs/vps.yaml).
 # Config
 
 A few config examples are available under the [configs directory](/configs).
-Config file can be written in yaml, json or toml.
+Config file can be written in yaml or json.
 
 Config examples can be generated using the `example` command directly:
 ```bash
