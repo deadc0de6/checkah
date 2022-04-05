@@ -45,11 +45,11 @@ func (c *Process) Run(t transport.Transport) *Result {
 			// alert if is running
 			return c.returnCheck("", fmt.Errorf("running"))
 		}
-		return c.returnCheck(fmt.Sprintf("running"), nil)
+		return c.returnCheck("running", nil)
 	}
 
 	if c.invert {
-		return c.returnCheck(fmt.Sprintf("not running"), nil)
+		return c.returnCheck("not running", nil)
 	}
 	// alert if is not running
 	return c.returnCheck("", fmt.Errorf("not running"))
