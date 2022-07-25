@@ -55,7 +55,7 @@ func (a *Webhook) GetOptions() map[string]string {
 
 // GetDescription returns a description for this alert
 func (a *Webhook) GetDescription() string {
-	return fmt.Sprintf("alert to webhook \"%s\"", a.url)
+	return fmt.Sprintf("alert to webhook %s", a.url)
 }
 
 // NewAlertWebhook creates a new file alert instance

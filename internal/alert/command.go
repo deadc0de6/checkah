@@ -29,7 +29,7 @@ func (a *Command) GetOptions() map[string]string {
 
 // GetDescription returns a description for this alert
 func (a *Command) GetDescription() string {
-	return fmt.Sprintf("alert to command \"%s\"", a.command)
+	return fmt.Sprintf("alert to command %s", a.command)
 }
 
 // NewAlertCommand creates a new script alert instance

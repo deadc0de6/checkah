@@ -212,7 +212,7 @@ func notify(host string, content string, alerts []alert.Alert) {
 		line := fmt.Sprintf("ALERT \"%s\" - %s", host, content)
 		err := a.Notify(line)
 		if err != nil {
-			c := fmt.Sprintf("notify \"%s\" error: ", a.GetDescription())
+			c := fmt.Sprintf("notification error for \"%s\": ", a.GetDescription())
 			col := color.New(color.FgRed)
 			fmt.Print(c + col.Sprintln(err.Error()))
 		}

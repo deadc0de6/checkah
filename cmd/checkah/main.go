@@ -35,6 +35,7 @@ type Switches struct {
 
 var (
 	version = "0.2.4"
+	name    = "checkah"
 	usage   = `checkah.
 
 Usage:
@@ -177,8 +178,8 @@ func main() {
 		printUsage()
 	}
 
+	fmt.Printf("%s v%s\n", name, version)
 	if opts.Version {
-		fmt.Printf("%s v%s\n", os.Args[0], version)
 		os.Exit(0)
 	}
 

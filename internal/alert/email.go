@@ -4,8 +4,9 @@ package alert
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"net/smtp"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // Email alert file struct
@@ -91,7 +92,7 @@ func (a *Email) GetOptions() map[string]string {
 
 // GetDescription returns a description for this alert
 func (a *Email) GetDescription() string {
-	return fmt.Sprintf("alert to email \"%s\"", a.mailto)
+	return fmt.Sprintf("alert to email %s", a.mailto)
 }
 
 // NewAlertEmail creates a new file alert instance
