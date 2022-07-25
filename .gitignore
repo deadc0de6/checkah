@@ -7,3 +7,4 @@ go.sum
 !configs/vps.yaml
 configs/
 cmd/checkah/checkah
+.vscode
