@@ -23,6 +23,6 @@ deps:
 	go mod tidy
 
 env:
-	@go env GO111MODULE=on
+	@go env -w GO111MODULE=on
 
 .PHONY: build env clean all deps build-all

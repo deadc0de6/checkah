@@ -241,7 +241,11 @@ func CheckRemote(remote *Remote, parallel bool, resChan chan *HostResult, doneFu
 	if isLocalhost(remote.Host) {
 		trans, err = transport.NewLocal()
 	} else {
-		trans, err = transport.NewSSH(remote.Host, remote.Port, remote.User, remote.Password, remote.Keyfile, remote.Timeout, remote.KnownHostInsecure)
+		var keyfiles []string
+		if len(remote.Keyfile) > 0 {
+			keyfiles = append(keyfiles, remote.Keyfile)
+		}
+		trans, err = transport.NewSSH(remote.Host, remote.Port, remote.User, remote.Password, keyfiles, remote.Timeout, remote.KnownHostInsecure)
 	}
 
 	if err != nil {

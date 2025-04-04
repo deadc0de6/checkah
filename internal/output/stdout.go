@@ -85,7 +85,7 @@ func (o *Stdout) Flush(key string) {
 }
 
 // NewStdout new instance
-func NewStdout(options map[string]string) (*Stdout, error) {
+func NewStdout(_ map[string]string) (*Stdout, error) {
 	o := &Stdout{
 		output: make(map[string]string),
 		mut:    &sync.Mutex{},

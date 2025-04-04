@@ -65,7 +65,10 @@ func NewAlertFile(options map[string]string) (*File, error) {
 
 	if truncate {
 		// truncate file
-		os.Truncate(path, 0)
+		err := os.Truncate(path, 0)
+		if err != nil {
+			log.Errorf("%v", err)
+		}
 		log.Debugf("truncate %s", path)
 	}
 

@@ -2,8 +2,11 @@
 
 package transport
 
-// knownhost key mismatch issue: https://github.com/golang/go/issues/28870
-// 		ssh-keyscan -H <host> >> ~/.ssh/known_hosts
+// knownhost key mismatch issue:
+// - https://github.com/golang/go/issues/28870
+// - https://github.com/golang/go/issues/36126
+// prepend your key generated with below commands to `~/.ssh/known_hosts`
+// 		ssh-keyscan -p 22 -H <host>
 
 import (
 	"bytes"
@@ -30,6 +33,13 @@ const (
 	retrySleep = 2
 )
 
+var (
+	default_keys = []string{
+		"id_rsa",
+		"id_ed25519",
+	}
+)
+
 // SSH the ssh struct
 type SSH struct {
 	config *ssh.ClientConfig
@@ -43,7 +53,7 @@ func fileExists(path string) bool {
 
 func checkKnownHosts() (ssh.HostKeyCallback, error) {
 	path := filepath.Join(os.Getenv("HOME"), ".ssh", "known_hosts")
-	log.Debugf("SSH reading known_hosts file from %s", path)
+	log.Debugf("SSH reading known_hosts file from \"%s\"", path)
 
 	f, err := knownhosts.New(path)
 	if err != nil {
@@ -51,7 +61,7 @@ func checkKnownHosts() (ssh.HostKeyCallback, error) {
 	}
 
 	return func(addr string, remote net.Addr, key ssh.PublicKey) error {
-		log.Debugf("SSH checking knownhost for %s (%v)", addr, remote)
+		log.Debugf("SSH checking knownhost for \"%s\" (\"%v\")", addr, remote)
 		return f(addr, remote, key)
 	}, nil
 }
@@ -99,7 +109,8 @@ func loadAgent() ssh.AuthMethod {
 }
 
 func loadKeyfile(path string) ssh.AuthMethod {
-	key, err := ioutil.ReadFile(path)
+	log.Debugf("SSH loading key from \"%s\"", path)
+	key, err := os.ReadFile(path)
 	if err != nil {
 		return nil
 	}
@@ -271,7 +282,7 @@ func checkDialOnError(remote string, timeout int) error {
 }
 
 // NewSSH creates an SSH instance
-func NewSSH(host string, port string, user string, password string, keyfile string, timeout int, insecure bool) (*SSH, error) {
+func NewSSH(host string, port string, user string, password string, keyfiles []string, timeout int, insecure bool) (*SSH, error) {
 	var auths []ssh.AuthMethod
 
 	log.Debugf("SSH creating a new connection to %s:%s", host, port)
@@ -294,28 +305,33 @@ func NewSSH(host string, port string, user string, password string, keyfile stri
 		log.Debug("SSH no password provided")
 	}
 
-	// set default keyfile if unset
-	if len(keyfile) < 1 {
-		keyfile = filepath.Join(os.Getenv("HOME"), ".ssh", "id_rsa")
+	// add default keys
+	if len(keyfiles) < 1 {
+		for _, name := range default_keys {
+			keyfile := filepath.Join(os.Getenv("HOME"), ".ssh", name)
+			keyfiles = append(keyfiles, keyfile)
+		}
 	}
 
 	// add keyfile as auth method
-	if len(keyfile) > 1 {
-		if strings.HasPrefix(keyfile, "~/") {
-			// handle tild
-			keyfile = filepath.Join(os.Getenv("HOME"), keyfile[2:])
-		}
-
-		log.Debugf("SSH keyfile: %s", keyfile)
-
-		if fileExists(keyfile) {
-			log.Debugf("SSH loading keyfile from %s", keyfile)
-			m := loadKeyfile(keyfile)
-			if m != nil {
-				auths = append(auths, m)
+	if len(keyfiles) > 0 {
+		for _, keyfile := range keyfiles {
+			if strings.HasPrefix(keyfile, "~/") {
+				// handle tild
+				keyfile = filepath.Join(os.Getenv("HOME"), keyfile[2:])
 			}
-		} else {
-			log.Debugf("SSH keyfile does not exist: %s", keyfile)
+
+			log.Debugf("SSH keyfile: %s", keyfile)
+
+			if fileExists(keyfile) {
+				log.Debugf("SSH loading keyfile from %s", keyfile)
+				m := loadKeyfile(keyfile)
+				if m != nil {
+					auths = append(auths, m)
+				}
+			} else {
+				log.Debugf("SSH keyfile does not exist: %s", keyfile)
+			}
 		}
 	} else {
 		log.Debug("SSH no keyfile found")
@@ -363,22 +379,23 @@ func NewSSH(host string, port string, user string, password string, keyfile stri
 		c, err = ssh.Dial(protocol, remote, t.config)
 		if err == nil {
 			break
-		} else {
-			// connection error
-			dialErr := checkDialOnError(remote, timeout)
-			if dialErr != nil {
-				// host is NOT reachable
-				err = fmt.Errorf("SSH connection error: %s", err.Error())
-			} else {
-				err = fmt.Errorf("SSH connection error but host is reachable: %s", err.Error())
-			}
-			log.Debug(err)
-			time.Sleep(time.Duration(retrySleep) * time.Second)
 		}
+		// connection error
+		dialErr := checkDialOnError(remote, timeout)
+		if dialErr != nil {
+			// host is NOT reachable
+			err = fmt.Errorf("SSH connection error: %s", err.Error())
+		} else {
+			err = fmt.Errorf("SSH connection error but host is reachable: %s", err.Error())
+		}
+		log.Debug(err)
+		time.Sleep(time.Duration(retrySleep) * time.Second)
 	}
+
 	if err != nil {
 		return nil, err
 	}
+
 	log.Debugf("SSH connected to %s@%s port %s", user, host, port)
 	t.client = c
 	return t, nil

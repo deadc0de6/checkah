@@ -8,6 +8,7 @@ import (
 	"path"
 	"strings"
 
+	"github.com/caarlos0/log"
 	"github.com/deadc0de6/checkah/internal/transport"
 )
 
@@ -50,7 +51,12 @@ func (c *Script) Run(t transport.Transport) *Result {
 		return c.returnCheck("", fmt.Errorf("scp \"%s\" to \"%s\" failed: %v", c.path, remotePath, err))
 	}
 	cmd := fmt.Sprintf(rmScript, remotePath)
-	defer t.Execute(cmd)
+	defer func() {
+		_, _, err := t.Execute(cmd)
+		if err != nil {
+			log.Errorf("%v", err)
+		}
+	}()
 
 	// execute script
 	sout, serr, err := t.Execute(remotePath)

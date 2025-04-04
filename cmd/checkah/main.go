@@ -128,7 +128,10 @@ func cmdCheck(configs []string) (int, int, int, int) {
 
 	if globalAlert != nil && errCnt > 0 {
 		line := fmt.Sprintf("check failed: %d/%d host(s) failed (check error: %d)", hostErrCnt, len(remotes), errCnt)
-		globalAlert.Notify(line)
+		err := globalAlert.Notify(line)
+		if err != nil {
+			log.Errorf("%v", err)
+		}
 	}
 	return len(remotes), checksCnt, hostErrCnt, errCnt
 }
