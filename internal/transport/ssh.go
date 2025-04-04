@@ -12,7 +12,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net"
 	"os"
 	"path"
@@ -161,7 +160,7 @@ func (t *SSH) Mkdir(remotePath string) error {
 // Copy scp a file to the remote
 func (t *SSH) Copy(localPath string, remotePath string, rights string) error {
 	// read local file
-	data, err := ioutil.ReadFile(localPath)
+	data, err := os.ReadFile(localPath)
 	if err != nil {
 		return err
 	}

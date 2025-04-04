@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	log "github.com/sirupsen/logrus"
@@ -32,7 +31,7 @@ func PrintConfig(cfg *Config, format string) error {
 	}
 
 	// viper doesn't allow to write to string
-	file, err := ioutil.TempFile("", "checkah")
+	file, err := os.CreateTemp("", "checkah")
 	if err != nil {
 		return err
 	}
@@ -44,7 +43,7 @@ func PrintConfig(cfg *Config, format string) error {
 		return err
 	}
 
-	content, err := ioutil.ReadFile(file.Name())
+	content, err := os.ReadFile(file.Name())
 	if err != nil {
 		return err
 	}
