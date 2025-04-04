@@ -34,7 +34,7 @@ const (
 )
 
 var (
-	default_keys = []string{
+	defaultKeys = []string{
 		"id_rsa",
 		"id_ed25519",
 	}
@@ -307,7 +307,7 @@ func NewSSH(host string, port string, user string, password string, keyfiles []s
 
 	// add default keys
 	if len(keyfiles) < 1 {
-		for _, name := range default_keys {
+		for _, name := range defaultKeys {
 			keyfile := filepath.Join(os.Getenv("HOME"), ".ssh", name)
 			keyfiles = append(keyfiles, keyfile)
 		}
