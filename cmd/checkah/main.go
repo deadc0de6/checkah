@@ -34,7 +34,7 @@ type Switches struct {
 }
 
 var (
-	version = "0.3.1"
+	version = "0.3.2"
 	name    = "checkah"
 	usage   = `checkah.
 
