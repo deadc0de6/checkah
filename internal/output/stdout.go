@@ -30,7 +30,7 @@ func checkPre(ok bool) string {
 		pre = "ERROR"
 		col = color.New(color.FgRed)
 	}
-	return fmt.Sprintf("[%s]", col.Sprintf(pre))
+	return fmt.Sprintf("[%s]", col.Sprintf("%s", pre))
 }
 
 func outputTitle(str string) string {
