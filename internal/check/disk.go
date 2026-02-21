@@ -111,7 +111,7 @@ func NewCheckDisk(options map[string]string) (*Disk, error) {
 	}
 
 	c := Disk{
-		command:    "df",
+		command:    "df -a",
 		mountPoint: mount,
 		limit:      limit,
 		options:    options,
