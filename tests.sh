@@ -10,7 +10,7 @@ go install golang.org/x/lint/golint@latest
 go install honnef.co/go/tools/cmd/staticcheck@latest
 go install github.com/mgechev/revive@latest
 go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-go install github.com/goreleaser/goreleaser@latest
+go install github.com/goreleaser/goreleaser/v2@latest
 
 go mod tidy
 
