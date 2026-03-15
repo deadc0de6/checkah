@@ -176,6 +176,9 @@ The following checks are available:
 * **disk**: check disk space used
   * *mount*: mount point (optional, default to `/`)
   * *limit*: if disk use percent crosses this value, an alert is triggered
+* **zfs**: check zfs pool disk space used
+  * *pool*: pool name (optional, default to `tank`)
+  * *limit*: if zfs pool disk use percent crosses this value, an alert is triggered
 * **loadavg**: check load average
   * *limit_1min*: if load average over 1 min crosses this value, an alert is triggered
   * *limit_5min*: if load average over 5 min crosses this value, an alert is triggered
