@@ -13,7 +13,7 @@ Features:
 * check over SSH (password, keyfile, agent)
 * config file based (yaml, json)
 * multiple alerts (webhooks, email, script, file, ...)
-* multiple checks (disk, memory, loadavg, process, opened ports, ...)
+* multiple checks (disk, memory, loadavg, process, opened ports, zfs, systemd, ...)
 
 You need at least **golang 1.16**
 
@@ -75,6 +75,11 @@ profiles:
   - type: tcp
     options:
       port: "22"
+  - type: systemd
+    options:
+      service: "nginx"
+      state: "enabled"
+      running: "active"
 - alerts:
   - type: file
     options:
@@ -197,6 +202,11 @@ The following checks are available:
 * **command**: check the return code of a command run on remote
   * *command*: the command
   * *name*: command name for output description (optional)
+* **systemd**: check systemd service is in specific state
+  * *service*: systemd service name
+  * *state*: service state (`enabled`, `disabled`, `static`, `masked`, ...)
+  * *running*: service active state (`active`, `inactive`, `failed`, ...)
+  * *invert*: if value "yes", alert if service in the above states (optional)
 
 The following alerts are available:
 

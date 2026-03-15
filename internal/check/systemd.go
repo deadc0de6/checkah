@@ -35,6 +35,7 @@ type Systemd struct {
 	serviceEnabled string
 	runningCommand string
 	serviceRunning string
+	invert         bool
 	options        map[string]string
 }
 
@@ -58,9 +59,16 @@ func (c *Systemd) Run(t transport.Transport) *Result {
 		return c.returnCheck("", err2)
 	}
 	enabled = strings.TrimSpace(enabled)
-	if enabled != c.serviceEnabled {
-		err := fmt.Errorf("service \"%s\" state is not \"%s\" but \"%s\"", c.serviceName, c.serviceEnabled, enabled)
-		return c.returnCheck("", err)
+	if c.invert {
+		if enabled == c.serviceEnabled {
+			err := fmt.Errorf("service \"%s\" state is \"%s\"", c.serviceName, enabled)
+			return c.returnCheck("", err)
+		}
+	} else {
+		if enabled != c.serviceEnabled {
+			err := fmt.Errorf("service \"%s\" state is not \"%s\" but \"%s\"", c.serviceName, c.serviceEnabled, enabled)
+			return c.returnCheck("", err)
+		}
 	}
 
 	// check service running
@@ -70,9 +78,16 @@ func (c *Systemd) Run(t transport.Transport) *Result {
 		return c.returnCheck("", err2)
 	}
 	running = strings.TrimSpace(running)
-	if running != c.serviceRunning {
-		err := fmt.Errorf("service \"%s\" running state is not \"%s\" but \"%s\"", c.serviceName, c.serviceRunning, running)
-		return c.returnCheck("", err)
+	if c.invert {
+		if running == c.serviceRunning {
+			err := fmt.Errorf("service \"%s\" running state is \"%s\"", c.serviceName, running)
+			return c.returnCheck("", err)
+		}
+	} else {
+		if running != c.serviceRunning {
+			err := fmt.Errorf("service \"%s\" running state is not \"%s\" but \"%s\"", c.serviceName, c.serviceRunning, running)
+			return c.returnCheck("", err)
+		}
 	}
 
 	return c.returnCheck("ok", nil)
@@ -116,12 +131,21 @@ func NewCheckSystemd(options map[string]string) (*Systemd, error) {
 	}
 	activeCommand := fmt.Sprintf("systemctl is-active %s", serviceName)
 
+	invert := false
+	inv, ok := options["invert"]
+	if ok {
+		if inv == "yes" {
+			invert = true
+		}
+	}
+
 	c := Systemd{
 		serviceName:    serviceName,
 		enabledCommand: enabledCommand,
 		serviceEnabled: state,
 		runningCommand: activeCommand,
 		serviceRunning: running,
+		invert:         invert,
 		options:        options,
 	}
 
