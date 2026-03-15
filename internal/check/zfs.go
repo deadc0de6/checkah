@@ -39,7 +39,7 @@ func (c *Zfs) Run(t transport.Transport) *Result {
 	// NAME     USED  AVAIL  MOUNTPOINT
 	lines := strings.Split(stdout, "\n")
 	for _, line := range lines {
-		fields := strings.Split(line, " ")
+		fields := strings.Fields(line)
 
 		if fields[0] != c.poolName {
 			// bad pool
@@ -91,7 +91,7 @@ func (c *Zfs) GetName() string {
 
 // GetDescription returns description
 func (c *Zfs) GetDescription() string {
-	return fmt.Sprintf("zfs \"%s\" used", c.poolName)
+	return fmt.Sprintf("zfs pool \"%s\" used", c.poolName)
 }
 
 // GetOptions returns the options
