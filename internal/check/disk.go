@@ -40,31 +40,33 @@ func (c *Disk) Run(t transport.Transport) *Result {
 	lines := strings.Split(stdout, "\n")
 	for _, line := range lines {
 		fields := strings.Split(line, " ")
-		if fields[len(fields)-1] == c.mountPoint {
-			// find first percent value
-			var value = ""
-			for _, f := range fields {
-				if strings.Contains(f, "%") {
-					value = f
-					break
-				}
-			}
-			v, err := c.getValue(value)
-			if err != nil {
-				return c.returnCheck("", err)
-			}
-
-			// check with limit
-			if v > c.limit {
-				err := fmt.Errorf("disk used of mount point \"%s\" above %d%%: %s", c.mountPoint, c.limit, value)
-				return c.returnCheck(value, err)
-			}
-			return c.returnCheck(value, nil)
+		if fields[len(fields)-1] != c.mountPoint {
+			// bad mountpoint
+			continue
 		}
+		// find first percent value
+		var value = ""
+		for _, f := range fields {
+			if strings.Contains(f, "%") {
+				value = f
+				break
+			}
+		}
+		v, err := c.getValue(value)
+		if err != nil {
+			return c.returnCheck("", err)
+		}
+
+		// check with limit
+		if v > c.limit {
+			err := fmt.Errorf("disk used of mount point \"%s\" above %d%%: %s", c.mountPoint, c.limit, value)
+			return c.returnCheck(value, err)
+		}
+		return c.returnCheck(value, nil)
 	}
 
 	// mount point not found
-	return c.returnCheck("", fmt.Errorf("mount point %s not found", c.mountPoint))
+	return c.returnCheck("", fmt.Errorf("mount point \"%s\" not found", c.mountPoint))
 }
 
 func (c *Disk) returnCheck(value string, err error) *Result {
