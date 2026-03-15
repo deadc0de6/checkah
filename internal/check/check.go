@@ -58,6 +58,8 @@ func GetCheck(name string, options map[string]string) (Check, error) {
 		return NewCheckUptime(options)
 	case "zfs":
 		return NewCheckZfs(options)
+	case "systemd":
+		return NewCheckSystemd(options)
 	}
 	return nil, fmt.Errorf("no such check: %s", name)
 }
